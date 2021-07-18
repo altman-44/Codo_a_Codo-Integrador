@@ -1,0 +1,28 @@
+{% extends 'layout.html' %}
+
+{% block main %}
+<section>
+    <h2>Usuarios</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Usuario</th>
+                <th>Email</th>
+                <th>Nombre</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for empleado in empleados %}
+            <tr>
+                <td>{{ empleado[0] }}</td>
+                <td>{{ empleado[1] }}</td>
+                <td>{{ empleado[2] + empleado[3] }}</td>
+                <td>
+                    <img src="{{ url_for('uploads', empleado[4]) }}" class="img-thumbnail" alt="Foto de perfil de {{ empleado[2] + empleado[3] }}">
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endblock main %}
