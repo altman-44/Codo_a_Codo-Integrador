@@ -12,13 +12,18 @@
             </tr>
         </thead>
         <tbody>
-            {% for empleado in empleados %}
+            {% for user in users %}
             <tr>
-                <td>{{ empleado[0] }}</td>
-                <td>{{ empleado[1] }}</td>
-                <td>{{ empleado[2] + empleado[3] }}</td>
+                <td>{{ user[0] }}</td>
+                <td>{{ user[1] }}</td>
+                <td>{{ user[2] + user[3] }}</td>
                 <td>
-                    <img src="{{ url_for('uploads', empleado[4]) }}" class="img-thumbnail" alt="Foto de perfil de {{ empleado[2] + empleado[3] }}">
+                    {% if user[4] %}
+                        <img src="{{ url_for('uploads', filename=user[4]) }}" class="img-thumbnail" alt="Foto de perfil de {{ empleado[2] + empleado[3] }}">
+                    {% else %}
+                        <p>Sin foto</p>
+                        <!-- <img src="" alt=""> -->
+                    {% endif %}
                 </td>
             </tr>
             {% endfor %}
