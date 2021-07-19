@@ -1,29 +1,40 @@
 {% extends 'layout.html' %}
 
+{% block title %} User List {% endblock title %}
+
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/employees/list.css') }}">
+{% endblock styles %}
+
 {% block main %}
-<section>
-    <h2>Usuarios</h2>
-    <table class="table">
-        <thead>
+<section class="p-4">
+    <h2>Users</h2>
+    <table class="table table-responsive-md">
+        <thead class="thead-dark">
             <tr>
-                <th>Usuario</th>
+                <th>Name</th>
                 <th>Email</th>
-                <th>Nombre</th>
+                <th>Area</th>
+                <th class="text-center">Profile Image</th>
+                <th class="text-center">Actions</th>
             </tr>
         </thead>
         <tbody>
             {% for user in users %}
             <tr>
-                <td>{{ user[0] }}</td>
-                <td>{{ user[1] }}</td>
-                <td>{{ user[2] + user[3] }}</td>
-                <td>
-                    {% if user[4] %}
-                        <img src="{{ url_for('uploads', filename=user[4]) }}" class="img-thumbnail" alt="Foto de perfil de {{ empleado[2] + empleado[3] }}">
-                    {% else %}
-                        <p>Sin foto</p>
-                        <!-- <img src="" alt=""> -->
-                    {% endif %}
+                <td class="align-middle">{{ user.name + ' ' + user.surname }}</td>
+                <td class="align-middle">{{ user.email }}</td>
+                <td class="align-middle">{{ user.area }}</td>
+                <td class="align-middle text-center">
+                    <div class="profile-image-container">
+                        <img src="{{ user.profile_img }}" class="profile-img" alt="User profile image">
+                    </div>
+                </td>
+                <td class="align-middle">
+                    <div class="d-flex flex-column align-items-center">
+                        <a href="{{ url_for('users.editUserView', id=user.id) }}" class="btn btn-warning my-2 w-75">Edit</a>
+                        <a href="{{ url_for('users.deleteUser', id=user.id) }}" class="btn btn-danger my-2 w-75">Remove</a>
+                    </div>
                 </td>
             </tr>
             {% endfor %}

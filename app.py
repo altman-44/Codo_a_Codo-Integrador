@@ -1,13 +1,16 @@
+from controller import *
 import os
 import secrets
+import cloudinary
 from flask import Flask
 from flaskext.mysql import MySQL
+from pymysql.cursors import DictCursor
 
 app = Flask(__name__, template_folder='templates')
 
 # Settings
 ''' MySQL '''
-db = MySQL()
+db = MySQL(cursorclass=DictCursor)
 app.config['MYSQL_DATABASE_HOST'] = os.getenv('MYSQL_CONNECTION_HOST')
 app.config['MYSQL_DATABASE_USER'] = os.getenv('MYSQL_CONNECTION_USER')
 app.config['MYSQL_DATABASE_PASSWORD'] = os.getenv('MYSQL_CONNECTION_PASSWORD')
@@ -15,8 +18,14 @@ app.config['MYSQL_DATABASE_DB'] = os.getenv('MYSQL_CONNECTION_DATABASE')
 db.init_app(app)
 ''' Session '''
 app.config['SECRET_KEY'] = secrets.token_urlsafe(16)
-''' Uploads '''
-app.config['UPLOADS_PATH'] = os.path.join('uploads')
+''' Cloudinary '''
+cloudinary.config(
+    cloud_name=os.getenv('CLOUDINARY_CLOUD_NAME'),
+    api_key=os.getenv('CLOUDINARY_API_KEY'),
+    api_secret=os.getenv('CLOUDINARY_API_SECRET')
+)
+# ''' Uploads '''
+# app.config['UPLOADS_PATH'] = os.path.join('uploads')
 
 from controller import *
 
