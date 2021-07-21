@@ -1,6 +1,6 @@
 {% extends 'layout.html' %}
 
-{% block title %} User List {% endblock title %}
+{% block title %} Employee List {% endblock title %}
 
 {% block styles %}
 <link rel="stylesheet" href="{{ url_for('static', filename='styles/employees/list.css') }}">
@@ -8,7 +8,7 @@
 
 {% block main %}
 <section class="p-4">
-    <h2>Users</h2>
+    <h2>Employee</h2>
     <table class="table table-responsive-md">
         <thead class="thead-dark">
             <tr>
@@ -20,20 +20,22 @@
             </tr>
         </thead>
         <tbody>
-            {% for user in users %}
+            {% for employee in employees %}
             <tr>
-                <td class="align-middle">{{ user.name + ' ' + user.surname }}</td>
-                <td class="align-middle">{{ user.email }}</td>
-                <td class="align-middle">{{ user.area }}</td>
+                <td class="align-middle">{{ employee.name + ' ' + employee.surname }}</td>
+                <td class="align-middle">{{ employee.email }}</td>
+                <td class="align-middle">{{ employee.area }}</td>
                 <td class="align-middle text-center">
                     <div class="profile-image-container">
-                        <img src="{{ user.profile_img }}" class="profile-img" alt="User profile image">
+                        <img src="{{ employee.profile_img }}" class="profile-img" alt="User profile image">
                     </div>
                 </td>
                 <td class="align-middle">
                     <div class="d-flex flex-column align-items-center">
-                        <a href="{{ url_for('users.editUserView', id=user.id) }}" class="btn btn-warning my-2 w-75">Edit</a>
-                        <a href="{{ url_for('users.deleteUser', id=user.id) }}" class="btn btn-danger my-2 w-75">Remove</a>
+                        <a href="{{ url_for('employees.editEmployeeView', id=employee.id) }}" class="btn btn-warning my-2 w-75">Edit</a>
+                        <form action="{{ url_for('employees.deleteEmployee', id=employee.id) }}" method="DELETE" class="my-2 w-75">
+                            <button class="btn btn-danger w-100">Remove</button>
+                        </form>
                     </div>
                 </td>
             </tr>

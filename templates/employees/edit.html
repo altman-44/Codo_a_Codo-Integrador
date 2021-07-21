@@ -1,0 +1,39 @@
+{% extends 'layout.html' %}
+
+{% block title %} Edit Employee Data {% endblock title %}
+
+{% block main %}
+<section class="container pt-4">
+    <h2>Edit Employee Data</h2>
+    <form action="{{ url_for('employees.editEmployee', id=employee.id) }}" method="PUT" class="form jumbotron p-4">
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" value="{{ employee.email }}" class="form-control">
+        </div>
+        <div class="form-group">
+            <label for="name">Name</label>
+            <input type="name" id="name" name="name" value="{{ employee.name }}" class="form-control" autocomplete="off">
+        </div>
+        <div class="form-group">
+            <label for="surname">Surname</label>
+            <input type="surname" id="surname" name="surname" value="{{ employee.surname }}" class="form-control" autocomplete="off">
+        </div>
+        <div class="form-group">
+            <button class="btn btn-primary">Submit</button>
+        </div>
+    </form>
+    <form action="{{ url_for('employees.uploadProfileImage') }}" method="POST" class="form jumbotron p-4" enctype="multipart/form-data">
+        <div class="form-group w-25">
+            <img src="{{ employee.profile_img }}" class="w-100" alt="User Profile Image">
+        </div>
+        <div class="form-group">
+            <label for="profile-image">Upload a profile image: </label>
+            <input type="file" id="profile-image" name="profileImage">
+        </div>
+        <div class="form-group">
+            <button class="btn btn-primary">Submit</button>
+        </div>
+        <input type="hidden" name="id" value="{{ employee.id }}">
+    </form>
+</section>
+{% endblock main %}
