@@ -1,22 +1,16 @@
 import os
 import secrets
 import cloudinary
-from db.HerokuPostgresql import HerokuPostgresql
 from flask import Flask
-from flaskext.mysql import MySQL
-from pymysql.cursors import DictCursor
+from extensions import db
 from routes.home import home
 from routes.employees import employees
 
 app = Flask(__name__, template_folder='templates')
 
-db = ''
-
 # Settings
-if os.getenv('ENV_MODE') == 'production':
-    db = HerokuPostgresql(os.getenv('DATABASE_URL'))
-else:
-    db = MySQL(cursorclass=DictCursor)
+''' DB '''
+if os.getenv('ENV_MODE') != 'production':
     app.config['MYSQL_DATABASE_HOST'] = os.getenv('MYSQL_CONNECTION_HOST')
     app.config['MYSQL_DATABASE_USER'] = os.getenv('MYSQL_CONNECTION_USER')
     app.config['MYSQL_DATABASE_PASSWORD'] = os.getenv('MYSQL_CONNECTION_PASSWORD')

@@ -1,7 +1,7 @@
 import os
 import cloudinary.uploader as cloudinaryUploader
 from flask import Blueprint, render_template, request, redirect, url_for, session
-from app import db
+from extensions import db
 from pymysql import IntegrityError
 
 employees = Blueprint('employees', __name__)
