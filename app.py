@@ -2,7 +2,7 @@ import os
 import secrets
 import cloudinary
 from flask import Flask
-from app.extensions import db
+from extensions import db
 from routes.home import home
 from routes.employees import employees
 
