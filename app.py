@@ -1,4 +1,3 @@
-from controller import *
 import os
 import secrets
 import cloudinary
