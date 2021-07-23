@@ -6,6 +6,8 @@ from db.HerokuPostgresql import HerokuPostgresql
 from flask import Flask
 from flaskext.mysql import MySQL
 from pymysql.cursors import DictCursor
+from routes.home import home
+from routes.employees import employees
 
 app = Flask(__name__, template_folder='templates')
 
@@ -32,7 +34,9 @@ cloudinary.config(
 # ''' Uploads '''
 # app.config['UPLOADS_PATH'] = os.path.join('uploads')
 
-from controller import *
+''' Routing '''
+app.register_blueprint(home)
+app.register_blueprint(employees, url_prefix='/employees')
 
 if __name__ == '__main__':
     app.run()
