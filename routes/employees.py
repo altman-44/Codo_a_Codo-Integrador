@@ -1,5 +1,6 @@
 import os
 import cloudinary.uploader as cloudinaryUploader
+from middlewares.auth import user_auth
 from flask import Blueprint, render_template, request, redirect, url_for, session
 from extensions import db
 from pymysql import IntegrityError
@@ -21,6 +22,7 @@ def getEmployees():
 
 
 @employees.route('/create', methods=['GET'])
+@user_auth
 def createEmployeeView():
     message = ''
     if ('message' in session):
@@ -30,17 +32,21 @@ def createEmployeeView():
 
 @employees.route('/create', methods=['POST'])
 def createEmployee():
-    conn = db.connect()
-    cursor = conn.cursor()
-    sql = 'INSERT INTO employees (name, email, surname, area, profile_img) VALUES (%s, %s, %s, %s, %s)'
     if validEmployeeData(request.form):
+        GENERIC_DB_ERR_MSG = 'Hubo un error al intentar subir los datos'
+        conn = db.connect()
+        cursor = conn.cursor()
+        sql = 'INSERT INTO employees (name, email, surname, area, profile_img) VALUES (%s, %s, %s, %s, %s)'
         data = (request.form['name'], request.form['email'],
                 request.form['surname'], request.form['area'], os.getenv('BASE_USER_PROFILE_IMAGE_URL'))
         try:
             cursor.execute(sql, data)
             conn.commit()
         except IntegrityError as err:
-            return handlePyMySQLError(err, url_for('employees.createEmployeeView'), 'Hubo un error al intentar subir los datos')
+            return handlePyMySQLError(err, url_for('employees.createEmployeeView'), GENERIC_DB_ERR_MSG)
+        except:
+            session['message'] = GENERIC_DB_ERR_MSG
+            return redirect(url_for('employees.createEmployeeView'))
         return redirect(url_for('employees.getEmployees'))
     session['message'] = "Todos los campos son requeridos"
     return redirect(url_for('employees.createEmployeeView'))

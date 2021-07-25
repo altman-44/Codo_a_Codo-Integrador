@@ -1,0 +1,16 @@
+{% extends 'layout.html' %}
+
+{% block title %} Register {% endblock title %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/register.css') }}">
+{% endblock head%}
+
+{% block main %}
+<section class="section-register">
+    <div class="options-container">
+        <a href="{{ url_for('organizations.index') }}" class="btn btn-outline-primary">I have an organization</a>
+        <a href="{{ url_for('employees.createEmployeeView') }}" class="btn btn-outline-info">I'm an employee</a>
+    </div>
+</section>
+{% endblock main %}
