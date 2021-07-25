@@ -7,10 +7,16 @@
 {% endblock head%}
 
 {% block main %}
-<section class="section-register">
-    <div class="options-container">
-        <a href="{{ url_for('organizations.index') }}" class="btn btn-outline-primary">I have an organization</a>
-        <a href="{{ url_for('employees.createEmployeeView') }}" class="btn btn-outline-info">I'm an employee</a>
-    </div>
+<section class="container pt-4">
+    <form action="/register" method="POST" class="form jumbotron p-4">
+        <h2>Sign Up</h2>
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" name="email" class="form-control" placeholder="Email">
+        </div>
+        <div class="form-group">
+            <button class="btn btn-primary">Submit</button>
+        </div>
+    </form>
 </section>
 {% endblock main %}

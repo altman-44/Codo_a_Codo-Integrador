@@ -1,31 +1,31 @@
 from extensions import db
-from flask import Blueprint, render_template, request, redirect, session, url_for, g
+from db.helpers import createUser
+from flask import Blueprint, render_template, request, redirect, session, url_for, flash
 
 organizations = Blueprint('organizations', __name__)
 
 @organizations.route('/')
 def index():
-    message = session['message'] if 'message' in session else ''
-    return render_template('organizations/create.html', message=message)
+    return render_template('organizations/create.html')
 
 @organizations.route('/create', methods=["POST"])
 def createOrganization():
-    if validateOrganizationData(request.form):
-        sql = 'INSERT INTO organizations (name, email) VALUES (%s, %s)'
-        data = (request.form['name'], request.form['email'])
+    if validOrganizationData(request.form):
         conn = db.connect()
         cursor = conn.cursor()
+        userId = createUser(request.form['email'], request.form['password'])
+        sql = 'INSERT INTO organizations (name, user_id) VALUES (%s, %s)'
+        data = (request.form['name'], userId)
         try:
             cursor.execute(sql, data)
             conn.commit()
             return redirect(url_for('dashboard.index'))
         except:
-            session['message'] = 'Hubo un error al intentar subir los datos'
+            flash('There was an error trying to upload the data', 'error')
     return redirect(url_for('organizations.index'))
 
-def validateOrganizationData(data):
+def validOrganizationData(data):
     if not data['name'] or not data['email']:
-        session['message'] = 'El nombre y el email son requeridos'
-        g.message = 'MENSAJE'
+        flash('All fields are required', 'error')
         return False
     return True

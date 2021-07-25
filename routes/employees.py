@@ -1,7 +1,7 @@
 import os
 import cloudinary.uploader as cloudinaryUploader
 from middlewares.auth import user_auth
-from flask import Blueprint, render_template, request, redirect, url_for, session
+from flask import Blueprint, render_template, request, redirect, url_for, session, flash
 from extensions import db
 from pymysql import IntegrityError
 
@@ -17,17 +17,13 @@ def getEmployees():
     for employee in list(employees):
         if not employee['profile_img']:
             employee['profile_img'] = os.getenv('BASE_USER_PROFILE_IMAGE_URL')
-    message = session['message'] if 'message' in session else ''
-    return render_template('employees/index.html', employees=employees, message=message)
+    return render_template('employees/index.html', employees=employees)
 
 
 @employees.route('/create', methods=['GET'])
 @user_auth
 def createEmployeeView():
-    message = ''
-    if ('message' in session):
-        message = session['message']
-    return render_template('employees/create.html', message=message)
+    return render_template('employees/create.html')
 
 
 @employees.route('/create', methods=['POST'])
@@ -45,10 +41,10 @@ def createEmployee():
         except IntegrityError as err:
             return handlePyMySQLError(err, url_for('employees.createEmployeeView'), GENERIC_DB_ERR_MSG)
         except:
-            session['message'] = GENERIC_DB_ERR_MSG
+            flash(GENERIC_DB_ERR_MSG, 'error')
             return redirect(url_for('employees.createEmployeeView'))
         return redirect(url_for('employees.getEmployees'))
-    session['message'] = "Todos los campos son requeridos"
+    flash('All fields are required', 'error')
     return redirect(url_for('employees.createEmployeeView'))
 
 
@@ -62,7 +58,7 @@ def editEmployeeView(id):
         if not employee['profile_img']:
             employee['profile_img'] = os.getenv('BASE_USER_PROFILE_IMAGE_URL')
         return render_template('employees/edit.html', employee=employee)
-    session['message'] = "Couldn't found the user"
+    flash("Couldn't find the user")
     return redirect(url_for('employees.getEmployees'))
 
 
@@ -105,12 +101,13 @@ def deleteEmployee(id):
 
 
 def handlePyMySQLError(error, url_for_redirect, msgIfNotSpecificError):
-    session['message'] = msgIfNotSpecificError
+    msg = msgIfNotSpecificError
     if error.args[0] == 1062:
         try:
-            session['message'] = f"El campo {error.args[1].split('key')[1].strip()} ya fue elegido por otro usuario"
+            msg = f"El campo {error.args[1].split('key')[1].strip()} ya fue elegido por otro usuario"
         except IndexError:
             pass
+    flash(msg, 'error')
     return redirect(url_for_redirect)
 
 

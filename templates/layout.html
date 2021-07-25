@@ -14,15 +14,7 @@
 <body>
     {% include 'partials/header.html' %}
     <main>
-        {% if message %}
-        <div class="alert alert-danger text-center">
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-            <p>{{ message }}</p>
-            <p>{{ g.message }}</p>
-        </div>
-        {% endif %}
+        {% include 'partials/alerts.html' %}
         {% block main %}
         {% endblock main %}
     </main>
