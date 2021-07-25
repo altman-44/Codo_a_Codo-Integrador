@@ -1,9 +1,55 @@
-{% extends 'layout.html' %}
+{% extends 'layout.html' %} {% block title %} Home {% endblock title %} {% block
+main %}
+<br>
+<div class="jumbotron">
+  <h1 class="display-4">Hello, welcome to the employees register system!</h1>
+  <p class="lead">
+    This is a simple software, its function is to create, delete and update the
+    employees of a company.
+  </p>
+  <hr class="my-4" />
+  <p>
+    To do this, you must first register to create a user and thus be able to
+    perform the actions that this page allows.
+  </p>
+  <br />
+  <a
+    class="btn btn-primary btn-lg"
+    href="{{ url_for('home.login') }}"
+    role="button"
+    >Log in</a
+  >
+</div>
 
-{% block title %} Home {% endblock title %} 
+<div class="row">
+  <div class="col-sm-6">
+    <div class="card">
+      <div class="card-body bg-dark">
+        <p class="card-text text-white">
+          If you don't have an account, click here and register for the first
+          time
+        </p>
+        <br /><br />
+        <a href="{{ url_for('home.register') }}" class="btn btn-secondary"
+          >Register</a
+        >
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6  ">
+    <div class="card">
+      <div class="card-body bg-dark">
+        <p class="card-text text-white">
+          If you are already registered, click here and log in to continue with
+          your username
+        </p>
+        <br />
+        <a href="{{ url_for('home.login') }}" class="btn btn-secondary"
+          >Log in</a
+        >
+      </div>
+    </div>
+  </div>
+</div>
 
-{% block main %}
-<section>
-    <h2>Home</h2>
-</section>
 {% endblock main %}
