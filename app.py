@@ -1,12 +1,8 @@
 import os
 import secrets
 import cloudinary
-from flask import Flask
-from extensions import db
-from routes.home import home
-from routes.employees import employees
-
-app = Flask(__name__, template_folder='templates')
+from extensions import app, db
+from controller import *
 
 # Settings
 ''' DB '''
@@ -27,9 +23,5 @@ cloudinary.config(
 # ''' Uploads '''
 # app.config['UPLOADS_PATH'] = os.path.join('uploads')
 
-''' Routing '''
-app.register_blueprint(home)
-app.register_blueprint(employees, url_prefix='/employees')
-
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True if os.getenv('ENV_MODE') != 'production' else False)

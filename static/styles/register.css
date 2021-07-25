@@ -1,0 +1,10 @@
+.section-register {
+    padding-top: 10rem;
+}
+
+.options-container {
+    width: 100%;
+    text-align: center;
+    background-color: rgb(233, 233, 233);
+    padding: 4rem;
+}
