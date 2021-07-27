@@ -1,9 +1,19 @@
 {% extends 'layout.html' %}
 
-{% block title %} Dashboard {% endblock title %}
+{% block title %}Dashboard{% endblock title %}
 
 {% block main %}
 <section>
     <h2>Dashboard</h2>
+    {% if data['type'] == 'organization' %}
+    <div class="container pt-4">
+        <h3>Actions</h3>
+        <ul class="pl-4">
+            <li>
+                <a href="{{ url_for('employees.getEmployees') }}">Employees</a>
+            </li>
+        </ul>
+    </div>
+    {% endif %}
 </section>
 {% endblock main %}

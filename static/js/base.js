@@ -7,3 +7,8 @@ document.addEventListener('DOMContentLoaded', () => {
         main.style.minHeight = (window.innerHeight - header.clientHeight) + 'px'
     }
 })
+
+function ajaxDelete(url) {
+    req = new XMLHttpRequest()
+    
+}

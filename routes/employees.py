@@ -1,12 +1,17 @@
 import os
 import cloudinary.uploader as cloudinaryUploader
-from middlewares.auth import user_auth
-from flask import Blueprint, render_template, request, redirect, url_for, session, flash
+from middlewares.auth import user_auth, getPayload
+from flask import Blueprint, render_template, request, redirect, url_for, flash
 from extensions import db
 from pymysql import IntegrityError
+from db.queries import createUser
 
 employees = Blueprint('employees', __name__)
 
+@employees.before_request
+@user_auth
+def before_request():
+    pass
 
 @employees.route('/')
 def getEmployees():
@@ -15,37 +20,43 @@ def getEmployees():
     cursor.execute('SELECT * FROM employees')
     employees = cursor.fetchall()
     for employee in list(employees):
+        cursor.execute('SELECT email FROM users WHERE users.id = %s', (employee['user_id']))
+        user = cursor.fetchone()
+        employee['email'] = user['email']
         if not employee['profile_img']:
             employee['profile_img'] = os.getenv('BASE_USER_PROFILE_IMAGE_URL')
     return render_template('employees/index.html', employees=employees)
 
 
 @employees.route('/create', methods=['GET'])
-@user_auth
-def createEmployeeView():
-    return render_template('employees/create.html')
+def createEmployeeView(email='', name='', surname='', area=''):
+    return render_template('employees/create.html', email=email, name=name, surname=surname, area=area)
 
 
 @employees.route('/create', methods=['POST'])
 def createEmployee():
     if validEmployeeData(request.form):
         GENERIC_DB_ERR_MSG = 'Hubo un error al intentar subir los datos'
-        conn = db.connect()
-        cursor = conn.cursor()
-        sql = 'INSERT INTO employees (name, email, surname, area, profile_img) VALUES (%s, %s, %s, %s, %s)'
-        data = (request.form['name'], request.form['email'],
-                request.form['surname'], request.form['area'], os.getenv('BASE_USER_PROFILE_IMAGE_URL'))
-        try:
-            cursor.execute(sql, data)
-            conn.commit()
-        except IntegrityError as err:
-            return handlePyMySQLError(err, url_for('employees.createEmployeeView'), GENERIC_DB_ERR_MSG)
-        except:
-            flash(GENERIC_DB_ERR_MSG, 'error')
-            return redirect(url_for('employees.createEmployeeView'))
-        return redirect(url_for('employees.getEmployees'))
+        createdUser = createUser(request.form['email'], request.form['password'])[1]
+        if createdUser:
+            print('user_id', createdUser['id'])
+            payload = getPayload()
+            print('payload is', payload)
+            conn = db.connect()
+            cursor = conn.cursor()
+            sql = 'INSERT INTO employees (name, surname, area, profile_img, organization_id, user_id) VALUES (%s, %s, %s, %s, %s, %s)'
+            data = (request.form['name'], request.form['surname'], request.form['area'], os.getenv('BASE_USER_PROFILE_IMAGE_URL'), payload['organization_id'], createdUser['id'])
+            try:
+                cursor.execute(sql, data)
+                conn.commit()
+            except IntegrityError as err:
+                return handlePyMySQLError(err, url_for('employees.createEmployeeView', email=request.form['email'], name=request.form['name'], surname=request.form['surname'], area=request.form['area']), GENERIC_DB_ERR_MSG)
+            except:
+                flash(GENERIC_DB_ERR_MSG, 'error')
+                return redirect(url_for('employees.createEmployeeView', email=request.form['email'], name=request.form['name'], surname=request.form['surname'], area=request.form['area']))
+            return redirect(url_for('employees.getEmployees'))
     flash('All fields are required', 'error')
-    return redirect(url_for('employees.createEmployeeView'))
+    return redirect(url_for('employees.createEmployeeView', email=request.form['email'], name=request.form['name'], surname=request.form['surname'], area=request.form['area']))
 
 
 @employees.route('/edit/<int:id>', methods=["GET"])

@@ -8,7 +8,7 @@
 
 {% block main %}
 <section class="p-4">
-    <h2>Employee</h2>
+    <h2>Employees</h2>
     <table class="table table-responsive-md">
         <thead class="thead-dark">
             <tr>
@@ -42,5 +42,10 @@
             {% endfor %}
         </tbody>
     </table>
+    <a href="{{ url_for('employees.createEmployeeView') }}" class="btn btn-info">Create new employee</a>
 </section>
 {% endblock main %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/employees.js') }}"></script>
+{% endblock scripts %}
