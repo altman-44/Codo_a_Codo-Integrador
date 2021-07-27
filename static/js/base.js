@@ -8,7 +8,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 })
 
-function ajaxDelete(url) {
-    req = new XMLHttpRequest()
-    
+function ajaxDelete(url, formData, cb) {
+    xhr = new XMLHttpRequest()
+    xhr.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            cb(this.responseText)
+        }
+    }
+    xhr.open('DELETE', url)
+    xhr.send(formData)
 }

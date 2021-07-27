@@ -105,7 +105,8 @@ def deleteEmployee(id):
         sql = f'DELETE FROM employees WHERE id = {id}'
         result = cursor.execute(sql)
         conn.commit()
-        print(result)
+        if result:
+            flash('Employee removed successfully')
         # os.remove(os.path.join(
         #     app.config['UPLOADS_PATH']), employee['profile_img'])
     return redirect(url_for('employees.getEmployees'))
