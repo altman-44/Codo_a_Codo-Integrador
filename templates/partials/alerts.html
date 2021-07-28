@@ -1,6 +1,7 @@
+<div id="alert-messages-container">
 {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
-        {% for category, message in messages %}
+            {% for category, message in messages %}
             <div class="alert alert-{{ 'danger' if category == 'error' else ('success' if category == 'success' else ('warning' if category == 'warning' else 'info')) }} text-center">
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
@@ -10,3 +11,4 @@
         {% endfor %}
     {% endif %}
 {% endwith %}
+</div>

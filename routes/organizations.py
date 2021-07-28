@@ -22,12 +22,12 @@ def createOrganization():
         conn = db.connect()
         cursor = conn.cursor()
         payload = getPayload()
-        sql = 'INSERT INTO organizations (name, user_id) VALUES (%s, %s)'
+        sql = 'INSERT INTO organization_accounts (name, user_id) VALUES (%s, %s)'
         data = (request.form['name'], payload['user_id'])
         try:
             cursor.execute(sql, data)
             conn.commit()
-            cursor.execute('SELECT * FROM organizations WHERE name = %s and user_id = %s', (request.form['name'], payload['user_id']))
+            cursor.execute('SELECT * FROM organization_accounts WHERE name = %s and user_id = %s', (request.form['name'], payload['user_id']))
             data = cursor.fetchone()
             data = generateUserTypeData(userType='organization', details=data)
             payload['user_type'] = generateUserTypePayload(userType='organization', details=data)
