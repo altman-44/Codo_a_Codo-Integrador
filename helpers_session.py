@@ -11,7 +11,7 @@ def decodeToken(token):
 def generateUserTypeData(userType='', details={}):
     return {
         'type': userType,
-        'details': details
+        'details': dict(details)
     }
 
 def generateUserTypePayload(table='', id=None):

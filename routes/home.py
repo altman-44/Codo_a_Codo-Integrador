@@ -19,7 +19,7 @@ def login():
     if validLoginData(request.form):
         conn = db.connect()
         cursor = conn.cursor()
-        cursor.execute('SELECT * FROM users WHERE email = %s',(request.form['email']))
+        cursor.execute(f"SELECT * FROM users WHERE email = '{request.form['email']}'")
         user = cursor.fetchone()
         if user:
             decodedPasswordPayload = decodeToken(user['password'])
@@ -29,8 +29,6 @@ def login():
                     payload = {'user_id': user['id']}
                     session['token'] = encodeData(payload=payload)
                     return redirect(url_for('home.selectUserType'))
-                print('payload', payload)
-                print('data', data)
                 session['token'] = encodeData(payload=payload)
                 session['data'] = data
                 return redirect(url_for('dashboard.index'))

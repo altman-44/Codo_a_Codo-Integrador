@@ -22,19 +22,23 @@ def createOrganization():
         conn = db.connect()
         cursor = conn.cursor()
         payload = getPayload()
-        sql = 'INSERT INTO organization_accounts (name, user_id) VALUES (%s, %s)'
-        data = (request.form['name'], payload['user_id'])
+        print(payload)
+        sql = f"INSERT INTO organization_accounts (name, user_id) VALUES ('{request.form['name']}', {payload['user_id']})"
+        # data = (request.form['name'], payload['user_id'])
         try:
-            cursor.execute(sql, data)
+            # cursor.execute(sql, data)
+            cursor.execute(sql)
             conn.commit()
-            cursor.execute('SELECT * FROM organization_accounts WHERE name = %s and user_id = %s', (request.form['name'], payload['user_id']))
+            cursor.execute(f"SELECT * FROM organization_accounts WHERE name = '{request.form['name']}' and user_id = {payload['user_id']}")
             data = cursor.fetchone()
+            print('data', data['id'])
             data = generateUserTypeData(userType='organization', details=data)
             payload['user_type'] = generateUserTypePayload(table='organization_accounts', id=data['id'])
             session['token'] = encodeData(payload=payload)
             session['data'] = data
             return redirect(url_for('dashboard.index'))
-        except:
+        except Exception as err:
+            print('err', err)
             flash('There was an error trying to upload the data', 'error')
     return redirect(url_for('organizations.index', organizationName=request.form['name']))
 
