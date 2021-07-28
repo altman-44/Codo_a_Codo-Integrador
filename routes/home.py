@@ -1,13 +1,16 @@
-import jwt
-import os
 from extensions import db
-from flask import render_template, Blueprint, request, redirect, url_for, flash
+from flask import render_template, Blueprint, request, redirect, url_for, flash, session
+from db.queries import searchDataByUserId, createUser
+from helpers_session import encodeData, decodeToken
+
 
 home = Blueprint('home', __name__)
+
 
 @home.route('/')
 def index():
     return render_template('home.html')
+
 
 @home.route('/login', methods=["GET", "POST"])
 def login():
@@ -16,28 +19,39 @@ def login():
     if validLoginData(request.form):
         conn = db.connect()
         cursor = conn.cursor()
-        cursor.execute('SELECT * FROM users WHERE email = %s', (request.form['email']))
+        cursor.execute('SELECT * FROM users WHERE email = %s',(request.form['email']))
         user = cursor.fetchone()
         if user:
-            jwt.decode(user.password, os.getenv('SECRET_KEY'), algorithms=['HS256'])
-            return redirect(url_for('dashboard.index'))
-        flash('User with the entered email not found', 'error')
-    return render_template('login.html')
+            decodedPasswordPayload = decodeToken(user['password'])
+            if decodedPasswordPayload['password'] == request.form['password']:
+                payload, data = searchDataByUserId(userId=user['id'])
+                if not payload or not data:
+                    return redirect(url_for('home.selectUserType'))
+                session['token'] = encodeData(payload=payload)
+                session['data'] = data
+                return redirect(url_for('dashboard.index'))
+        flash("Email and password don't match", 'error')
+    return render_template('login.html', email=request.form['email'], password=request.form['password'])
+
 
 @home.route('/register', methods=["GET", "POST"])
 def register():
     if (request.method == 'GET'):
         return render_template('register.html')
     if validLoginData(request.form):
-        conn = db.connect()
-        cursor = conn.cursor()
-        user = cursor.execute('SELECT * FROM users WHERE email = %s', (request.form['email']))
-        print('user', user)
-        flash('Email is already taken', 'error')
-    return render_template('register.html')
+        if createUser(request.form['email'], request.form['password'])[0]:
+            flash('You registered successfully! You can login now', 'success')
+            return redirect(url_for('home.login'))
+    return render_template('register.html', email=request.form['email'], password=request.form['password'])
+
+
+@home.route('/select-user-type')
+def selectUserType():
+    return render_template('select-user-type.html')
+
 
 def validLoginData(data):
-    if not data['name'] or not data['email']:
+    if not data['email'] or not data['password']:
         flash('All fields are required', 'error')
         return False
     return True
