@@ -9,16 +9,16 @@ def createUser(email, password):
     created = False
     conn = db.connect()
     cursor = conn.cursor()
-    cursor.execute('SELECT * FROM users WHERE email = %s', (email))
+    cursor.execute(f"SELECT * FROM users WHERE email = '{email}'")
     user = cursor.fetchone()
     if not user:
-        sql = 'INSERT INTO users (email, password) VALUES (%s, %s)'
+        sql = "INSERT INTO users (email, password) VALUES (%s, %s)"
         passwordToken = jwt.encode({'password': password}, os.getenv('SECRET_KEY'), algorithm='HS256')
         data = (email, passwordToken)
         try:
             cursor.execute(sql, data)
             conn.commit()
-            cursor.execute("SELECT * FROM users WHERE email = %s", (email))
+            cursor.execute(f"SELECT * FROM users WHERE email = '{email}'")
             user = cursor.fetchone()
             if user:
                 created = True
@@ -42,7 +42,7 @@ def searchDataByUserId(userId):
         payload['organization_id'] = result['id']
         payload['user_type'] = generateUserTypePayload(table='organization_accounts', id=result['id'])
     else:
-        cursor.execute('SELECT * FROM employee_accounts INNER JOIN users ON employee_accounts.user_id = %s', (userId))
+        cursor.execute(f"SELECT * FROM employee_accounts INNER JOIN users ON employee_accounts.user_id = {userId}")
         data = cursor.fetchone()
         if data:
             data = generateUserTypeData(userType='employee', details=data)
@@ -53,9 +53,10 @@ def searchDataByUserId(userId):
     return (payload, data)
 
 def generateDataForOrganization(organizationData):
+    print('org', organizationData)
     data = generateUserTypeData(userType='organization', details=organizationData)
     conn = db.connect()
     cursor = conn.cursor()
-    cursor.execute('SELECT email from users INNER JOIN (SELECT * FROM employee_accounts WHERE organization_id = %s) AS employee_accounts ON employee_accounts.user_id = users.id', (organizationData['id']))
+    cursor.execute(f'SELECT email from users INNER JOIN (SELECT * FROM employee_accounts WHERE organization_id = {organizationData["id"]}) AS employee_accounts ON employee_accounts.user_id = users.id')
     data['employees'] = cursor.fetchall()
     return data
