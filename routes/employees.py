@@ -1,7 +1,7 @@
 import os
 import cloudinary.uploader as cloudinaryUploader
 from middlewares.auth import user_auth, getPayload
-from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
+from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify, session
 from extensions import db
 from pymysql import IntegrityError
 from db.queries import createUser
@@ -17,16 +17,18 @@ def before_request():
 def getEmployees():
     conn = db.connect()
     cursor = conn.cursor()
-    cursor.execute('SELECT * FROM employee_accounts')
-    employees = cursor.fetchall()
-    for employee in list(employees):
-        cursor.execute('SELECT email FROM users WHERE users.id = %s', (employee['user_id']))
-        user = cursor.fetchone()
-        employee['email'] = user['email']
-        if not employee['profile_img']:
-            employee['profile_img'] = os.getenv('BASE_USER_PROFILE_IMAGE_URL')
-    return render_template('employees/index.html', employees=employees)
-
+    if session['data']['type'] == 'organization':
+        cursor.execute(f'SELECT * FROM employee_accounts WHERE organization_id = {session["data"]["details"]["id"]}')
+        employees = cursor.fetchall()
+        for employee in list(employees):
+            cursor.execute('SELECT email FROM users WHERE users.id = %s', (employee['user_id']))
+            user = cursor.fetchone()
+            employee['email'] = user['email']
+            if not employee['profile_img']:
+                employee['profile_img'] = os.getenv('BASE_USER_PROFILE_IMAGE_URL')
+        return render_template('employees/index.html', employees=employees)
+    flash("You can't access this view", 'error')
+    return redirect(url_for('dashboard.index'))
 
 @employees.route('/create', methods=['GET'])
 def createEmployeeView(email='', name='', surname='', area=''):
@@ -39,9 +41,7 @@ def createEmployee():
         GENERIC_DB_ERR_MSG = 'Hubo un error al intentar subir los datos'
         createdUser = createUser(request.form['email'], request.form['password'])[1]
         if createdUser:
-            print('user_id', createdUser['id'])
             payload = getPayload()
-            print('payload is', payload)
             conn = db.connect()
             cursor = conn.cursor()
             sql = 'INSERT INTO employee_accounts (name, surname, area, profile_img, organization_id, user_id) VALUES (%s, %s, %s, %s, %s, %s)'
