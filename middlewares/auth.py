@@ -7,6 +7,7 @@ def user_auth(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         payload = getPayload()
+        print(payload)
         if payload:
             if verifyBaseAuthSecret(payload):
                 return f(*args, **kwargs)

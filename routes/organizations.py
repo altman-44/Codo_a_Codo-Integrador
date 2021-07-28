@@ -30,9 +30,10 @@ def createOrganization():
             cursor.execute('SELECT * FROM organization_accounts WHERE name = %s and user_id = %s', (request.form['name'], payload['user_id']))
             data = cursor.fetchone()
             data = generateUserTypeData(userType='organization', details=data)
-            payload['user_type'] = generateUserTypePayload(userType='organization', details=data)
+            payload['user_type'] = generateUserTypePayload(table='organization_accounts', id=data['id'])
             session['token'] = encodeData(payload=payload)
-            return redirect(url_for('dashboard.index', data=data))
+            session['data'] = data
+            return redirect(url_for('dashboard.index'))
         except:
             flash('There was an error trying to upload the data', 'error')
     return redirect(url_for('organizations.index', organizationName=request.form['name']))

@@ -1,9 +1,51 @@
-{% extends 'layout.html' %}
+{% extends 'layout.html' %} {% block title %} Home {% endblock title %} {% block
+main %}
+<br>
+<div class="jumbotron">
+  <h1 class="display-4">Hello, welcome to the employee manager system!</h1>
+  <p class="lead">
+    This is a simple software, its function is to provide a wide variety of possibilities to the members of any company around the world. Esentially, the managers of an organization will be able to register employees. In the incoming version, employees will be able to manage their own data.
+  </p>
+  <hr class="my-4" />
+  <p>
+    Want to try this out? You must first register to create a user and thus be able to
+    perform the actions of an organization manager by yourself.
+  </p>
+  <br />
+  <a
+    class="btn btn-primary btn-lg"
+    href="{{ url_for('home.register') }}"
+    role="button"
+    >Register</a
+  >
+</div>
 
-{% block title %} Home {% endblock title %} 
+<div class="row">
+  <div class="col-sm-6">
+    <div class="card">
+      <div class="card-body bg-dark">
+        <p class="card-text text-white">
+          Don't have an account yet? Click here and register for the first time
+        </p>
+        <br/>
+        <a href="{{ url_for('home.register') }}" class="btn btn-secondary"
+          >Register</a>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6">
+    <div class="card">
+      <div class="card-body bg-dark">
+        <p class="card-text text-white">
+          If you are already registered, click here and log in to continue with
+          your username
+        </p>
+        <br/>
+        <a href="{{ url_for('home.login') }}" class="btn btn-secondary"
+          >Log in</a>
+      </div>
+    </div>
+  </div>
+</div>
 
-{% block main %}
-<section>
-    <h2>Home</h2>
-</section>
 {% endblock main %}

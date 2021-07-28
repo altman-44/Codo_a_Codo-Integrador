@@ -35,7 +35,7 @@ def searchDataByUserId(userId):
     data = None
     conn = db.connect()
     cursor = conn.cursor()
-    cursor.execute('SELECT * FROM organization_accounts INNER JOIN users ON organization_accounts.user_id = %s', (userId))
+    cursor.execute(f'SELECT * FROM organization_accounts INNER JOIN users ON organization_accounts.user_id = {userId}')
     result = cursor.fetchone()
     if result:
         data = generateDataForOrganization(result)

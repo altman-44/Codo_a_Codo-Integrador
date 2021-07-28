@@ -25,8 +25,12 @@ def login():
             decodedPasswordPayload = decodeToken(user['password'])
             if decodedPasswordPayload['password'] == request.form['password']:
                 payload, data = searchDataByUserId(userId=user['id'])
-                if not payload or not data:
+                if not payload:
+                    payload = {'user_id': user['id']}
+                    session['token'] = encodeData(payload=payload)
                     return redirect(url_for('home.selectUserType'))
+                print('payload', payload)
+                print('data', data)
                 session['token'] = encodeData(payload=payload)
                 session['data'] = data
                 return redirect(url_for('dashboard.index'))
@@ -44,6 +48,10 @@ def register():
             return redirect(url_for('home.login'))
     return render_template('register.html', email=request.form['email'], password=request.form['password'])
 
+@home.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('home.index'))
 
 @home.route('/select-user-type')
 def selectUserType():
