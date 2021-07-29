@@ -14,3 +14,9 @@ header {
     position: sticky;
     top: 0;
 }
+
+.btn:hover {
+    transition: .5s ease;
+    transform: scale(1.04);
+    border: 2px solid black;
+}

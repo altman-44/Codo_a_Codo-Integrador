@@ -31,14 +31,13 @@ def createOrganization():
             conn.commit()
             cursor.execute(f"SELECT * FROM organization_accounts WHERE name = '{request.form['name']}' and user_id = {payload['user_id']}")
             data = cursor.fetchone()
-            print('data', data['id'])
+            payload['organization_id'] = data['id']
             data = generateUserTypeData(userType='organization', details=data)
-            payload['user_type'] = generateUserTypePayload(table='organization_accounts', id=data['id'])
+            payload['user_type'] = generateUserTypePayload(table='organization_accounts', id=data['details']['id'])
             session['token'] = encodeData(payload=payload)
             session['data'] = data
             return redirect(url_for('dashboard.index'))
-        except Exception as err:
-            print('err', err)
+        except:
             flash('There was an error trying to upload the data', 'error')
     return redirect(url_for('organizations.index', organizationName=request.form['name']))
 
