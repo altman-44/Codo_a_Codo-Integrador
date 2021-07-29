@@ -1,3 +1,25 @@
 .profile-img {
     width: 6rem;
+    border-radius: 8px;
+}
+
+.form-field-container {
+    text-align: center;
+}
+
+.form-field-container input {
+    margin-bottom: .6rem;
+}
+
+.form-field-container input:last-of-type {
+    margin: 0;
+} 
+
+.quick-actions-container {
+    /* border-top: 1px solid rgb(109, 109, 109); */
+    padding: 1rem 0;
+}
+
+.quick-actions-title {
+    border-bottom: 1px solid rgb(109, 109, 109);
 }

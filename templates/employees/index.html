@@ -9,6 +9,13 @@
 {% block main %}
 <section class="p-4">
     <h2>Employees</h2>
+    {% if employees %}
+    <div class="quick-actions-container">
+        <p class="quick-actions-title">Quick Actions</p>
+        <div class="quick-actions-links">
+            <a href="{{ url_for('employees.createEmployeeView') }}">Create new employee</a>
+        </div>
+    </div>
     <table class="table table-responsive-md">
         <thead class="thead-dark">
             <tr>
@@ -40,9 +47,35 @@
                 </td>
             </tr>
             {% endfor %}
+            <tr>
+                <form action="{{ url_for('employees.createEmployee') }}" method="POST">
+                    <td class="form-field-container">
+                        <input type="name" name="name" class="form-control" placeholder="Name">
+                        <input type="name" name="surname" class="form-control" placeholder="Surname">
+                    </td>
+                    <td class="form-field-container">
+                        <input type="email" name="email" class="form-control" placeholder="Email">
+                        <input type="password" name="password" class="form-control" placeholder="Password">
+                    </td>
+                    <td class="form-field-container">
+                        <input type="text" name="area" class="form-control" placeholder="Area">
+                    </td>
+                    <td></td>
+                    <td class="form-field-container">
+                        <button class="btn btn-outline-success">
+                            Create employee
+                        </button>
+                    </td>
+                </form>
+            </tr>
         </tbody>
     </table>
-    <a href="{{ url_for('employees.createEmployeeView') }}" class="btn btn-info">Create new employee</a>
+    {% else %}
+    <div class="py-3">
+        <p>It seems there are no employees in the organization yet.</p>
+        <a href="{{ url_for('employees.createEmployeeView') }}">Create new employee</a>
+    </div>
+    {% endif %}
 </section>
 {% endblock main %}
 

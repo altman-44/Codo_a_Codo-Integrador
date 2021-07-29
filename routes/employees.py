@@ -51,6 +51,7 @@ def createEmployee():
             payload = getPayload()
             conn = db.connect()
             cursor = conn.cursor()
+            print('payload', payload)
             sql = f"INSERT INTO employee_accounts (name, surname, area, profile_img, organization_id, user_id) VALUES ('{request.form['name']}', '{request.form['surname']}', '{request.form['area'] or None}', '{os.getenv('BASE_USER_PROFILE_IMAGE_URL') or None}', {payload['organization_id']}, {createdUser['id']})"
             # data = (request.form['name'], request.form['surname'], request.form['area'], os.getenv('BASE_USER_PROFILE_IMAGE_URL'), payload['organization_id'], createdUser['id'])
             try:
