@@ -40,7 +40,7 @@ def verifyBaseAuthSecret(payload):
     return False
 
 def verifyUserTypeAuthSecret(payload):
-    if 'user_type' in payload:
-        return bool(payload['user_type'])
+    if 'details' in payload and 'type' in payload['details']:
+        return bool(payload['type'])
     flash('You need to specify a user type first')
     return False
