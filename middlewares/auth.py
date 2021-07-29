@@ -17,7 +17,9 @@ def user_type_auth(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         payload = getPayload()
+        print('payload', payload)
         if payload:
+            print('there is payload')
             if verifyBaseAuthSecret(payload):
                 if verifyUserTypeAuthSecret(payload):
                     return f(*args, **kwargs)
