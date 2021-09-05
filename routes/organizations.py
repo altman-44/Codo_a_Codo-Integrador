@@ -1,6 +1,7 @@
-import os
-import jwt
-from extensions import db
+# import os
+# import jwt
+from models.Organization import Organization
+from extensions import dbSession
 from flask import Blueprint, render_template, request, redirect, session, url_for, flash
 from middlewares.auth import user_auth, getPayload
 from helpers_session import generateUserTypeData, encodeData, generateUserTypePayload
@@ -19,21 +20,15 @@ def index(organizationName=''):
 @organizations.route('/create', methods=["POST"])
 def createOrganization():
     if validOrganizationData(request.form):
-        conn = db.connect()
-        cursor = conn.cursor()
         payload = getPayload()
         print(payload)
-        sql = f"INSERT INTO organization_accounts (name, user_id) VALUES ('{request.form['name']}', {payload['user_id']})"
-        # data = (request.form['name'], payload['user_id'])
         try:
-            # cursor.execute(sql, data)
-            cursor.execute(sql)
-            conn.commit()
-            cursor.execute(f"SELECT * FROM organization_accounts WHERE name = '{request.form['name']}' and user_id = {payload['user_id']}")
-            data = cursor.fetchone()
-            payload['organization_id'] = data['id']
-            data = generateUserTypeData(userType='organization', details=data)
-            payload['user_type'] = generateUserTypePayload(table='organization_accounts', id=data['details']['id'])
+            organization = Organization(request.form['name'], payload['user_id'])
+            dbSession.add(organization)
+            dbSession.commit()
+            payload['organization_id'] = organization['id']
+            data = generateUserTypeData(userType='organization', details=organization)
+            payload['user_type'] = generateUserTypePayload(userType=Organization, id=organization['id'])
             session['token'] = encodeData(payload=payload)
             session['data'] = data
             return redirect(url_for('dashboard.index'))

@@ -15,8 +15,11 @@ header {
     top: 0;
 }
 
+.btn {
+    border-width: 2px;
+}
+
 .btn:hover {
     transition: .5s ease;
-    transform: scale(1.04);
     border: 2px solid black;
 }

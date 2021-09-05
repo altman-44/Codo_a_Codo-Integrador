@@ -8,14 +8,14 @@ def encodeData(payload):
 def decodeToken(token):
     return jwt.decode(token, os.getenv('SECRET_KEY'), algorithms=['HS256'])
 
-def generateUserTypeData(userType='', details={}):
+def generateUserTypeData(userType, details):
     return {
         'type': userType,
-        'details': dict(details)
+        'details': {col.name: getattr(details, col.name) for col in details.__table__.columns}
     }
 
-def generateUserTypePayload(table='', id=None):
+def generateUserTypePayload(userType, id):
     return {
-        'table': table,
+        'type': userType.__name__,
         'id': id
     }

@@ -2,40 +2,41 @@ import os
 import cloudinary.uploader as cloudinaryUploader
 from middlewares.auth import user_auth, getPayload
 from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify, session
-from extensions import db
+from extensions import dbSession
 from pymysql import IntegrityError
 from db.queries import createUser
+from models.Employee import Employee
+from models.User import User
 
 employees = Blueprint('employees', __name__)
+
 
 @employees.before_request
 @user_auth
 def before_request():
     pass
 
+
 @employees.route('/')
 def getEmployees():
-    conn = db.connect()
-    cursor = conn.cursor()
     if session['data']['type'] == 'organization':
         employeesAux = []
-        # print(session['data'])
-        cursor.execute(f'SELECT * FROM employee_accounts WHERE organization_id = {session["data"]["details"]["id"]}')
-        employees = cursor.fetchall()
+        employees = dbSession.query(Employee).filter_by(
+            organization_id=session["data"]["details"]["id"]).all()
         for employee in list(employees):
-            cursor.execute(f"SELECT * FROM users WHERE users.id = {employee['user_id']}")
-            user = cursor.fetchone()
-            # print(dict(user))
-            # employee['email'] = dict(user)['email']
-            employeeAux = dict(employee)
-            email = dict(user)['email']
-            employeeAux['email'] = email
+            user = dbSession.query(User).filter_by(
+                id=employee.user_id).first()
+            employeeAux = employee
+            email = user.email
+            employeeAux.email = email
             employeesAux.append(employeeAux)
-            if not employee['profile_img']:
-                employee['profile_img'] = os.getenv('BASE_USER_PROFILE_IMAGE_URL')
+            if not employee.profile_img:
+                employee.profile_img = os.getenv(
+                    'BASE_USER_PROFILE_IMAGE_URL')
         return render_template('employees/index.html', employees=employeesAux)
     flash("You can't access this view", 'error')
     return redirect(url_for('dashboard.index'))
+
 
 @employees.route('/create', methods=['GET'])
 def createEmployeeView(email='', name='', surname='', area=''):
@@ -46,22 +47,18 @@ def createEmployeeView(email='', name='', surname='', area=''):
 def createEmployee():
     if validEmployeeData(request.form):
         GENERIC_DB_ERR_MSG = 'Hubo un error al intentar subir los datos'
-        createdUser = createUser(request.form['email'], request.form['password'])[1]
+        createdUser = createUser(
+            request.form['email'], request.form['password'])[1]
         if createdUser:
             payload = getPayload()
-            conn = db.connect()
-            cursor = conn.cursor()
-            print('payload', payload)
-            sql = f"INSERT INTO employee_accounts (name, surname, area, profile_img, organization_id, user_id) VALUES ('{request.form['name']}', '{request.form['surname']}', '{request.form['area'] or None}', '{os.getenv('BASE_USER_PROFILE_IMAGE_URL') or None}', {payload['organization_id']}, {createdUser['id']})"
-            # data = (request.form['name'], request.form['surname'], request.form['area'], os.getenv('BASE_USER_PROFILE_IMAGE_URL'), payload['organization_id'], createdUser['id'])
             try:
-                # cursor.execute(sql, data)
-                cursor.execute(sql)
-                conn.commit()
-            except IntegrityError as err:
-                return handlePyMySQLError(err, url_for('employees.createEmployeeView', email=request.form['email'], name=request.form['name'], surname=request.form['surname'], area=request.form['area']), GENERIC_DB_ERR_MSG)
-            except Exception as err:
-                print(err)
+                employee = Employee(request.form['name'], request.form['surname'],
+                                    payload['organization_id'], createdUser['id'], request.form['area'])
+                dbSession.add(employee)
+                dbSession.commit()
+            # except IntegrityError as err:
+            #     return handlePyMySQLError(err, url_for('employees.createEmployeeView', email=request.form['email'], name=request.form['name'], surname=request.form['surname'], area=request.form['area']), GENERIC_DB_ERR_MSG)
+            except Exception:
                 flash(GENERIC_DB_ERR_MSG, 'error')
                 return redirect(url_for('employees.createEmployeeView', email=request.form['email'], name=request.form['name'], surname=request.form['surname'], area=request.form['area']))
             return redirect(url_for('employees.getEmployees'))
@@ -71,20 +68,17 @@ def createEmployee():
 
 @employees.route('/edit/<int:id>', methods=["GET"])
 def editEmployeeView(id):
-    conn = db.connect()
-    cursor = conn.cursor()
-    cursor.execute(f'SELECT * FROM employee_accounts WHERE id={id}')
-    employee = cursor.fetchone()
+    employee = dbSession.query(Employee).filter_by(id=id).first()
     if employee:
-        employeeAux = dict(employee)
-        result = cursor.execute(f"SELECT * FROM users WHERE id={employee['user_id']}")
-        if result:
-            user = cursor.fetchone()
-            employeeAux['email'] = dict(user)['email']
-        if not employee['profile_img']:
-            employee['profile_img'] = os.getenv('BASE_USER_PROFILE_IMAGE_URL')
+        employeeAux = employee
+        user = dbSession.query(User).fiter_by(id=employee.user_id)
+        if user:
+            employeeAux.email = user.email
+        if not employeeAux.profile_img:
+            employeeAux.profile_img = os.getenv(
+                'BASE_USER_PROFILE_IMAGE_URL')
         if 'email' not in employeeAux:
-            employeeAux['email'] = ''
+            employeeAux.email = ''
         return render_template('employees/edit.html', employee=employeeAux)
     flash("Couldn't find the employee")
     return redirect(url_for('employees.getEmployees'))
@@ -99,7 +93,8 @@ def editEmployee(id):
     employee = cursor.fetchone()
     if employee:
         try:
-            cursor.execute(f"SELECT * FROM users WHERE id={employee['user_id']}")
+            cursor.execute(
+                f"SELECT * FROM users WHERE id={employee['user_id']}")
             user = cursor.fetchone()
 
             newName = request.form['name']
@@ -107,11 +102,13 @@ def editEmployee(id):
             newArea = request.form['area']
             userResult = 1
             employeeResult = 1
-            
+
             if user and user['email'] != request.form['email']:
-                userResult = cursor.execute(f"UPDATE users SET email='{request.form['email']}' WHERE id={employee['user_id']}")
+                userResult = cursor.execute(
+                    f"UPDATE users SET email='{request.form['email']}' WHERE id={employee['user_id']}")
             if employee['name'] != newName or employee['surname'] != newSurname or employee['area'] != newArea:
-                employeeResult = cursor.execute(f"UPDATE employee_accounts SET name='{newName}', surname='{newSurname}', area='{newArea}' WHERE id={id}")
+                employeeResult = cursor.execute(
+                    f"UPDATE employee_accounts SET name='{newName}', surname='{newSurname}', area='{newArea}' WHERE id={id}")
             if userResult and employeeResult:
                 type = 'success'
                 message = 'User data was updated successfully'
@@ -127,6 +124,7 @@ def editEmployee(id):
         except:
             message = 'There was an error trying to update the data. Please, try it later'
     return jsonify(redirect_url=url_for('employees.getEmployees'), type=type, message=message)
+
 
 @employees.route('/profile-image', methods=["POST"])
 def uploadProfileImage():
@@ -149,6 +147,7 @@ def uploadProfileImage():
         # return redirect(url_for('employees.editEmployeeView', id=employee['id']))
     return redirect(url_for('home.index'))
 
+
 @employees.route('/delete/<int:id>', methods=["DELETE"])
 def deleteEmployee(id):
     type = 'error'
@@ -159,7 +158,8 @@ def deleteEmployee(id):
     employee = cursor.fetchone()
     if employee:
         # sql = f'DELETE FROM employee_accounts WHERE id = {id}'
-        result = cursor.execute(f"DELETE FROM users WHERE id={employee['user_id']}")
+        result = cursor.execute(
+            f"DELETE FROM users WHERE id={employee['user_id']}")
         if result:
             conn.commit()
             type = 'success'

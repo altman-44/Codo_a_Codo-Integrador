@@ -1,5 +1,5 @@
 from middlewares.auth import user_auth, user_type_auth, getPayload
-from extensions import db
+# from extensions import db
 from flask import Blueprint, render_template, session
 
 dashboard = Blueprint('dashboard', __name__)

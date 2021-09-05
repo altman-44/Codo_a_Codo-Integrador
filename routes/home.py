@@ -1,8 +1,8 @@
-from extensions import db
+from extensions import dbSession
 from flask import render_template, Blueprint, request, redirect, url_for, flash, session
 from db.queries import searchDataByUserId, createUser
 from helpers_session import encodeData, decodeToken
-
+from models.User import User
 
 home = Blueprint('home', __name__)
 
@@ -17,16 +17,14 @@ def login():
     if request.method == 'GET':
         return render_template('login.html')
     if validLoginData(request.form):
-        conn = db.connect()
-        cursor = conn.cursor()
-        cursor.execute(f"SELECT * FROM users WHERE email = '{request.form['email']}'")
-        user = cursor.fetchone()
+        user = dbSession.query(User).filter_by(
+            email=request.form['email']).first()
         if user:
-            decodedPasswordPayload = decodeToken(user['password'])
+            decodedPasswordPayload = decodeToken(user.password)
             if decodedPasswordPayload['password'] == request.form['password']:
-                payload, data = searchDataByUserId(userId=user['id'])
+                payload, data = searchDataByUserId(userId=user.id)
                 if not payload:
-                    payload = {'user_id': user['id']}
+                    payload = {'user_id': user.id}
                     session['token'] = encodeData(payload=payload)
                     return redirect(url_for('home.selectUserType'))
                 session['token'] = encodeData(payload=payload)
@@ -46,10 +44,12 @@ def register():
             return redirect(url_for('home.login'))
     return render_template('register.html', email=request.form['email'], password=request.form['password'])
 
+
 @home.route('/logout')
 def logout():
     session.clear()
     return redirect(url_for('home.index'))
+
 
 @home.route('/select-user-type')
 def selectUserType():
