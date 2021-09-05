@@ -12,7 +12,7 @@ SQLALCHEMY_DATABASE_URI = ''
 if os.getenv('ENV_MODE') == 'production':
     database = HerokuPostgresql(os.getenv('DATABASE_URL'))
 else:
-    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root@localhost:3306/codo_a_codo_tp_integrador_dev?charset=utf8mb4'
+    SQLALCHEMY_DATABASE_URI = f"mysql+pymysql://root@localhost:3306/{os.getenv('MYSQL_CONNECTION_DATABASE')}?charset=utf8mb4"
     # database = MySQL(cursorclass=DictCursor)
 
 engine = create_engine(SQLALCHEMY_DATABASE_URI)

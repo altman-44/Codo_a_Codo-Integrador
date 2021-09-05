@@ -1,6 +1,6 @@
 import os
 import cloudinary.uploader as cloudinaryUploader
-from middlewares.auth import user_auth, getPayload
+from middlewares.auth import user_auth, user_type_auth, getPayload
 from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify, session
 from extensions import dbSession
 from pymysql import IntegrityError
@@ -44,7 +44,9 @@ def createEmployeeView(email='', name='', surname='', area=''):
 
 
 @employees.route('/create', methods=['POST'])
+@user_type_auth
 def createEmployee():
+    """A function to create an employee. Executed by the action of an organization admin, not an employee."""
     if validEmployeeData(request.form):
         GENERIC_DB_ERR_MSG = 'Hubo un error al intentar subir los datos'
         createdUser = createUser(
@@ -53,14 +55,14 @@ def createEmployee():
             payload = getPayload()
             try:
                 employee = Employee(request.form['name'], request.form['surname'],
-                                    payload['organization_id'], createdUser['id'], request.form['area'])
+                    payload['user_data']['organization_id'], createdUser.id, request.form['area'])
                 dbSession.add(employee)
                 dbSession.commit()
-            # except IntegrityError as err:
-            #     return handlePyMySQLError(err, url_for('employees.createEmployeeView', email=request.form['email'], name=request.form['name'], surname=request.form['surname'], area=request.form['area']), GENERIC_DB_ERR_MSG)
+                session.pop('_flashes', None)
+                flash('User created successfully!', 'success')
             except Exception:
                 flash(GENERIC_DB_ERR_MSG, 'error')
-                return redirect(url_for('employees.createEmployeeView', email=request.form['email'], name=request.form['name'], surname=request.form['surname'], area=request.form['area']))
+                return redirect(url_for('employees.createEmployeeView', email=request.form['email'], name=request.form['name'], surname=request.form['surname'], area=request.form['area']))               
             return redirect(url_for('employees.getEmployees'))
     flash('All fields are required', 'error')
     return redirect(url_for('employees.createEmployeeView', email=request.form['email'], name=request.form['name'], surname=request.form['surname'], area=request.form['area']))

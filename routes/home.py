@@ -1,7 +1,7 @@
 from extensions import dbSession
 from flask import render_template, Blueprint, request, redirect, url_for, flash, session
 from db.queries import searchDataByUserId, createUser
-from helpers_session import encodeData, decodeToken
+from helpers_session import encodeData, decodeToken, generateUserDataPayload
 from models.User import User
 
 home = Blueprint('home', __name__)
@@ -24,7 +24,9 @@ def login():
             if decodedPasswordPayload['password'] == request.form['password']:
                 payload, data = searchDataByUserId(userId=user.id)
                 if not payload:
-                    payload = {'user_id': user.id}
+                    payload = {
+                        'user_data': generateUserDataPayload(user.id)
+                    }
                     session['token'] = encodeData(payload=payload)
                     return redirect(url_for('home.selectUserType'))
                 session['token'] = encodeData(payload=payload)

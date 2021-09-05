@@ -18,7 +18,6 @@ def user_type_auth(f):
     def decorated_function(*args, **kwargs):
         payload = getPayload()
         if payload:
-            print('there is payload')
             if verifyBaseAuthSecret(payload):
                 if verifyUserTypeAuthSecret(payload):
                     return f(*args, **kwargs)
@@ -33,13 +32,15 @@ def getPayload():
     return payload
 
 def verifyBaseAuthSecret(payload):
-    if 'auth_secret' in payload and 'user_id' in payload:
+    if 'auth_secret' in payload and 'user_data' in payload and 'user_id' in payload['user_data']:
         return payload['auth_secret'] == os.getenv('BASE_AUTH_SECRET')
     flash('You must be logged in first', 'warning')
     return False
 
 def verifyUserTypeAuthSecret(payload):
-    if 'user_type' in payload and 'type' in payload['user_type'] and 'id' in payload['user_type']:
-        return bool(payload['user_type']['type'] and payload['user_type']['id'])
+    if 'user_type' in payload['user_data']:
+        userTypeData = payload['user_data']['user_type']
+        if 'type' in userTypeData and 'id' in userTypeData:
+            return bool(userTypeData['type'] and userTypeData['id'])
     flash('You need to specify a user type first')
     return False

@@ -2,6 +2,7 @@ import os
 import jwt
 
 def encodeData(payload):
+    """A function that encodes a payload to convert it into a token and so store this token in the session variable"""
     payload['auth_secret'] = os.getenv('BASE_AUTH_SECRET')
     return jwt.encode(payload, os.getenv('SECRET_KEY'), algorithm='HS256')
 
@@ -14,8 +15,12 @@ def generateUserTypeData(userType, details):
         'details': {col.name: getattr(details, col.name) for col in details.__table__.columns}
     }
 
-def generateUserTypePayload(userType, id):
+def generateUserDataPayload(userId, organizationId=None, userType=None, userTypeId=None):
     return {
-        'type': userType.__name__,
-        'id': id
+        'organization_id': organizationId,
+        'user_id': userId,
+        'user_type': {
+            'type': userType.__name__ if userType else None,
+            'id': userTypeId
+        }
     }
