@@ -41,7 +41,9 @@
                     <div class="d-flex flex-column align-items-center">
                         <a href="{{ url_for('employees.editEmployeeView', id=employee.id) }}" class="btn btn-warning my-2 w-75">Edit</a>
                         <form action="{{ url_for('employees.deleteEmployee', id=employee.id) }}" class="my-2 w-75 delete-employee-form">
-                            <button class="btn btn-danger w-100">Remove</button>
+                            <button class="btn btn-remove btn-danger">
+                                <i class="far fa-trash-alt"></i>
+                            </button>
                         </form>
                     </div>
                 </td>
@@ -62,8 +64,8 @@
                     </td>
                     <td></td>
                     <td class="form-field-container">
-                        <button class="btn btn-outline-success">
-                            Create employee
+                        <button class="btn btn-add btn-outline-success">
+                            +
                         </button>
                     </td>
                 </form>

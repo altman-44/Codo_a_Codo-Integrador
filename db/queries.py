@@ -1,62 +1,61 @@
 import jwt
 import os
-from extensions import db
-from helpers_session import generateUserTypeData, generateUserTypePayload
-from flask import flash
+from extensions import dbSession
+from helpers_session import generateUserTypeData, generateUserDataPayload
+from flask import flash, session
+from models.User import User
+from models.Organization import Organization
+from models.Employee import Employee
+
 
 def createUser(email, password):
     USER_NOT_CREATED = "Couldn't create user, try it later"
     created = False
-    conn = db.connect()
-    cursor = conn.cursor()
-    cursor.execute(f"SELECT * FROM users WHERE email = '{email}'")
-    user = cursor.fetchone()
+    user = dbSession.query(User).filter_by(email=email).first()
     if not user:
-        sql = "INSERT INTO users (email, password) VALUES (%s, %s)"
-        passwordToken = jwt.encode({'password': password}, os.getenv('SECRET_KEY'), algorithm='HS256')
-        data = (email, passwordToken)
+        passwordToken = jwt.encode(
+            {'password': password}, os.getenv('SECRET_KEY'), algorithm='HS256')
         try:
-            cursor.execute(sql, data)
-            conn.commit()
-            cursor.execute(f"SELECT * FROM users WHERE email = '{email}'")
-            user = cursor.fetchone()
-            if user:
-                created = True
-            else:
-                flash(USER_NOT_CREATED, 'error')
+            user = User(email, passwordToken)
+            dbSession.add(user)
+            dbSession.commit()
+            created = True
         except:
             flash(USER_NOT_CREATED, 'error')
     else:
         flash('Email is already taken', 'error')
     return (created, user)
 
+
 def searchDataByUserId(userId):
     payload = {}
     data = None
-    conn = db.connect()
-    cursor = conn.cursor()
-    cursor.execute(f'SELECT * FROM organization_accounts INNER JOIN users ON organization_accounts.user_id = {userId}')
-    result = cursor.fetchone()
-    if result:
-        data = generateDataForOrganization(result)
-        payload['organization_id'] = result['id']
-        payload['user_type'] = generateUserTypePayload(table='organization_accounts', id=result['id'])
+    organization = dbSession.query(
+        Organization).filter_by(user_id=userId).first()
+    if organization:
+        data = generateDataForOrganization(organization)
+        # payload['organization_id'] = organization.id
+        payload['user_data'] = generateUserDataPayload(
+            userId=userId,
+            organizationId=organization.id,
+            userType=Organization,
+            userTypeId=organization.id)
     else:
-        cursor.execute(f"SELECT * FROM employee_accounts INNER JOIN users ON employee_accounts.user_id = {userId}")
-        data = cursor.fetchone()
-        if data:
-            data = generateUserTypeData(userType='employee', details=data)
-            payload['organization_id'] = result['organization_id']
-            payload['user_type'] = generateUserTypePayload(table='employee_accounts', id=result['id'])
-    if payload:
-        payload['user_id'] = userId
+        employee = dbSession.query(Employee).filter_by(user_id=userId).first()
+        if employee:
+            data = generateUserTypeData(userType='employee', details=employee)
+            # payload['organization_id'] = employee.organization_id
+            payload['user_data'] = generateUserDataPayload(
+                userId=userId,
+                organizationId=employee.organization_id,
+                userType=Employee,
+                userTypeId=employee.id)
+    # if payload:
+    #     payload['user_id'] = userId
     return (payload, data)
 
+
 def generateDataForOrganization(organizationData):
-    print('org', organizationData)
-    data = generateUserTypeData(userType='organization', details=organizationData)
-    conn = db.connect()
-    cursor = conn.cursor()
-    cursor.execute(f'SELECT email from users INNER JOIN (SELECT * FROM employee_accounts WHERE organization_id = {organizationData["id"]}) AS employee_accounts ON employee_accounts.user_id = users.id')
-    data['employees'] = cursor.fetchall()
+    data = generateUserTypeData(
+        userType='organization', details=organizationData)
     return data

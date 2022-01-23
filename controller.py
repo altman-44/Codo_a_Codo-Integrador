@@ -1,7 +1,10 @@
 import os
+
+from pymysql.err import Error
 from extensions import app
 from pymysql import DatabaseError as MySQLDatabaseError
 from psycopg2 import DatabaseError as PostgreSQLDatabaseError
+from sqlalchemy.exc import SQLAlchemyError
 from flask import request, session, redirect, flash, url_for, render_template
 from routes.home import home
 from routes.employees import employees
@@ -20,12 +23,16 @@ def before_request():
     if request.referrer:
         session['referrer'] = request.referrer
 
-@app.errorhandler(MySQLDatabaseError)
-def mysqlDatabaseError(error):
-    return handleDatabaseError()
+# @app.errorhandler(MySQLDatabaseError)
+# def mysqlDatabaseError(error):
+#     return handleDatabaseError()
 
-@app.errorhandler(PostgreSQLDatabaseError)
-def postgresqlDatabaseError(error):
+# @app.errorhandler(PostgreSQLDatabaseError)
+# def postgresqlDatabaseError(error):
+#     return handleDatabaseError()
+
+@app.errorhandler(SQLAlchemyError)
+def handleSimpleError(error):
     return handleDatabaseError()
 
 def handleDatabaseError():

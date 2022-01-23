@@ -1,9 +1,10 @@
-import os
-import jwt
-from extensions import db
+# import os
+# import jwt
+from models.Organization import Organization
+from extensions import dbSession
 from flask import Blueprint, render_template, request, redirect, session, url_for, flash
 from middlewares.auth import user_auth, getPayload
-from helpers_session import generateUserTypeData, encodeData, generateUserTypePayload
+from helpers_session import generateUserTypeData, encodeData, generateUserDataPayload
 
 organizations = Blueprint('organizations', __name__)
 
@@ -19,21 +20,19 @@ def index(organizationName=''):
 @organizations.route('/create', methods=["POST"])
 def createOrganization():
     if validOrganizationData(request.form):
-        conn = db.connect()
-        cursor = conn.cursor()
         payload = getPayload()
         print(payload)
-        sql = f"INSERT INTO organization_accounts (name, user_id) VALUES ('{request.form['name']}', {payload['user_id']})"
-        # data = (request.form['name'], payload['user_id'])
         try:
-            # cursor.execute(sql, data)
-            cursor.execute(sql)
-            conn.commit()
-            cursor.execute(f"SELECT * FROM organization_accounts WHERE name = '{request.form['name']}' and user_id = {payload['user_id']}")
-            data = cursor.fetchone()
-            payload['organization_id'] = data['id']
-            data = generateUserTypeData(userType='organization', details=data)
-            payload['user_type'] = generateUserTypePayload(table='organization_accounts', id=data['details']['id'])
+            userId = payload['user_data']['user_id']
+            organization = Organization(request.form['name'], userId)
+            dbSession.add(organization)
+            dbSession.commit()
+            data = generateUserTypeData(userType='organization', details=organization)
+            payload['user_data'] = generateUserDataPayload(
+                userId=userId,
+                organizationId=organization.id,
+                userType=Organization,
+                userTypeId=organization.id)
             session['token'] = encodeData(payload=payload)
             session['data'] = data
             return redirect(url_for('dashboard.index'))
