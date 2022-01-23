@@ -1,5 +1,6 @@
 from extensions import dbSession
-from flask import render_template, Blueprint, request, redirect, url_for, flash, session
+from flask import Blueprint, request, redirect, url_for, flash, session
+from routes.general_functions import render_layout_template
 from db.queries import searchDataByUserId, createUser
 from helpers_session import encodeData, decodeToken, generateUserDataPayload
 from models.User import User
@@ -9,13 +10,13 @@ home = Blueprint('home', __name__)
 
 @home.route('/')
 def index():
-    return render_template('home.html')
+    return render_layout_template('home.html', var="holaa")
 
 
 @home.route('/login', methods=["GET", "POST"])
 def login():
     if request.method == 'GET':
-        return render_template('login.html')
+        return render_layout_template('login.html', email="p5@p5.com", password="p5")
     if validLoginData(request.form):
         user = dbSession.query(User).filter_by(
             email=request.form['email']).first()
@@ -33,18 +34,18 @@ def login():
                 session['data'] = data
                 return redirect(url_for('dashboard.index'))
         flash("Email and password don't match", 'error')
-    return render_template('login.html', email=request.form['email'], password=request.form['password'])
+    return render_layout_template('login.html', email=request.form['email'], password=request.form['password'])
 
 
 @home.route('/register', methods=["GET", "POST"])
 def register():
     if (request.method == 'GET'):
-        return render_template('register.html')
+        return render_layout_template('register.html')
     if validLoginData(request.form):
         if createUser(request.form['email'], request.form['password'])[0]:
             flash('You registered successfully! You can login now', 'success')
             return redirect(url_for('home.login'))
-    return render_template('register.html', email=request.form['email'], password=request.form['password'])
+    return render_layout_template('register.html', email=request.form['email'], password=request.form['password'])
 
 
 @home.route('/logout')
@@ -55,7 +56,7 @@ def logout():
 
 @home.route('/select-user-type')
 def selectUserType():
-    return render_template('select-user-type.html')
+    return render_layout_template('select-user-type.html')
 
 
 def validLoginData(data):
