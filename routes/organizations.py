@@ -21,7 +21,6 @@ def index(organizationName=''):
 def createOrganization():
     if validOrganizationData(request.form):
         payload = getPayload()
-        print(payload)
         try:
             userId = payload['user_data']['user_id']
             organization = Organization(request.form['name'], userId)

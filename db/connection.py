@@ -10,9 +10,10 @@ from sqlalchemy.ext.declarative import declarative_base
 SQLALCHEMY_DATABASE_URI = ''
 
 if os.getenv('ENV_MODE') == 'production':
-    database = HerokuPostgresql(os.getenv('DATABASE_URL'))
+    # database = HerokuPostgresql(os.getenv('DATABASE_URL'))
+    SQLALCHEMY_DATABASE_URI = os.getenv('PROD_SQL_ALCHEMY_DATABASE_URI')
 else:
-    SQLALCHEMY_DATABASE_URI = f"mysql+pymysql://root@localhost:3306/{os.getenv('MYSQL_CONNECTION_DATABASE')}?charset=utf8mb4"
+    SQLALCHEMY_DATABASE_URI = os.getenv('DEV_SQL_ALCHEMY_DATABASE_URI')
     # database = MySQL(cursorclass=DictCursor)
 
 engine = create_engine(SQLALCHEMY_DATABASE_URI)
