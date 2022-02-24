@@ -1,3 +1,9 @@
 :root {
     --primary-color: green;
+    --primary-color-dark: #074607;
+    --primary-color-dark-text: white;
+    --color-action: rgb(7, 7, 124);
+    --color-action-text: white;
+    --soft-text: rgb(87, 87, 87);
+    --color-grey-1: #534d4d;
 }

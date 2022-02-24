@@ -5,7 +5,7 @@ from helpers_session import generateUserTypeData, generateUserDataPayload
 from flask import flash, session
 from models.User import User
 from models.Organization import Organization
-from models.Employee import Employee
+# from models.Employee import Employee
 
 
 def createUser(email, password):
@@ -41,15 +41,16 @@ def searchDataByUserId(userId):
             userType=Organization,
             userTypeId=organization.id)
     else:
-        employee = dbSession.query(Employee).filter_by(user_id=userId).first()
-        if employee:
-            data = generateUserTypeData(userType='employee', details=employee)
-            # payload['organization_id'] = employee.organization_id
-            payload['user_data'] = generateUserDataPayload(
-                userId=userId,
-                organizationId=employee.organization_id,
-                userType=Employee,
-                userTypeId=employee.id)
+        pass
+        # employee = dbSession.query(Employee).filter_by(user_id=userId).first()
+        # if employee:
+        #     data = generateUserTypeData(userType='employee', details=employee)
+        #     # payload['organization_id'] = employee.organization_id
+        #     payload['user_data'] = generateUserDataPayload(
+        #         userId=userId,
+        #         organizationId=employee.organization_id,
+        #         userType=Employee,
+        #         userTypeId=employee.id)
     # if payload:
     #     payload['user_id'] = userId
     return (payload, data)

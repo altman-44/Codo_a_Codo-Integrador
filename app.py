@@ -1,8 +1,12 @@
+from json import load
 import os
 import secrets
 import cloudinary
+from dotenv import load_dotenv
 from extensions import app
 from controller import *
+
+load_dotenv()
 
 # Settings
 ''' DB '''
@@ -25,4 +29,4 @@ cloudinary.config(
 # app.config['UPLOADS_PATH'] = os.path.join('uploads')
 
 if __name__ == '__main__':
-    app.run(debug=True if os.getenv('ENV_MODE') != 'production' else False)
+    app.run(host='0.0.0.0', debug=True if os.getenv('ENV_MODE') != 'production' else False)

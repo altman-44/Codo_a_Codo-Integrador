@@ -4,7 +4,7 @@ from db.connection import Base
 from sqlalchemy import Column, Integer, String, ForeignKey
 
 class Employee(Base):
-    __tablename__ = 'employee_accounts'
+    # __tablename__ = 'employee_accounts'
 
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)

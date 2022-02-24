@@ -10,7 +10,8 @@ class Organization(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)
     user_id = Column(Integer, ForeignKey('users.id'))
-    employees = relationship('Employee', back_populates='organization')
+    # employees = relationship('Employee', back_populates='organization')
+    students = relationship('Student', back_populates='organization')
 
     def __init__(self, name, user_id):
         self.name = name

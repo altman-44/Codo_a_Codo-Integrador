@@ -16,7 +16,7 @@ def index():
 @home.route('/login', methods=["GET", "POST"])
 def login():
     if request.method == 'GET':
-        return render_layout_template('login.html', email="p5@p5.com", password="p5")
+        return render_layout_template('login.html', email="t1@t1.com", password="t1")
     if validLoginData(request.form):
         user = dbSession.query(User).filter_by(
             email=request.form['email']).first()

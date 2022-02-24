@@ -7,7 +7,8 @@ from psycopg2 import DatabaseError as PostgreSQLDatabaseError
 from sqlalchemy.exc import SQLAlchemyError
 from flask import request, session, redirect, flash, url_for, render_template
 from routes.home import home
-from routes.employees import employees
+# from routes.employees import employees
+from routes.students import students
 from routes.organizations import organizations
 from routes.dashboard import dashboard
 
@@ -15,7 +16,8 @@ MAX_NUMBER_OF_REDIRECTS_TO_REFERRER = 4
 
 app.register_blueprint(home)
 app.register_blueprint(organizations, url_prefix='/organizations')
-app.register_blueprint(employees, url_prefix='/employees')
+app.register_blueprint(students, url_prefix='/students')
+# app.register_blueprint(employees, url_prefix='/employees')
 app.register_blueprint(dashboard, url_prefix='/dashboard')
 
 @app.before_request
@@ -33,6 +35,7 @@ def before_request():
 
 @app.errorhandler(SQLAlchemyError)
 def handleSimpleError(error):
+    print('DATABASE ERROR', error)
     return handleDatabaseError()
 
 def handleDatabaseError():

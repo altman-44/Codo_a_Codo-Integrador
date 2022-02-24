@@ -13,6 +13,11 @@ p, span {
 header {
     position: sticky;
     top: 0;
+    z-index: 10;
+}
+
+.soft-text {
+    color: var(--soft-text);
 }
 
 .btn {
@@ -30,4 +35,69 @@ header {
     padding-top: 0;
     font-weight: 900;
     /* width: 3rem; */
+}
+
+.btn-wrapper {
+    border: none;
+}
+
+input.form-control:focus {
+    box-shadow: none;
+    border-width: 2px;
+}
+
+form > .input-group, form > .form-group, form > #group-add-student-contacts {
+    margin: 2rem 0;
+}
+
+/* Colors */
+.bg-color-grey-1 {
+    background-color: var(--color-grey-1) !important;
+}
+
+.action {
+    background-color: var(--color-action);
+    color: var(--color-action-text);
+    border-color: var(--color-action);
+    transition: .5s ease;
+}
+.action:hover {
+    background-color: var(--color-action-text);
+    color: var(--color-action);
+}
+
+.input-group-text:not(.input-group-text-transparent):not(.action) {
+    /* width: 100%; */
+    background-color: var(--primary-color-dark);
+    color: var(--primary-color-dark-text);
+    border-color: var(--primary-color-dark);
+}
+
+/* .input-group-text-action {
+    background-color: var(--color-action);
+    color: var(--color-action-text);
+    border-color: var(--color-action);
+} */
+
+.input-group-prepend .input-group-text label {
+    margin: 0;
+}
+
+.input-group-append-icon {
+    width: 3rem;
+}
+
+.input-group-append-icon .input-group-text {
+    /* border-color: var(--primary-color-dark); */
+    border-color: var(--color-action);
+}
+
+.input-group-append-icon .input-group-icon {
+    width: 100%;
+}
+
+@media screen and (min-width: 576px) {
+    .input-group.col-sm-5 .input-group-prepend .input-group-text, .input-group.col-md-3 .input-group-prepend .input-group-text {
+        border-radius: .25rem .25rem 0 0;
+    }
 }

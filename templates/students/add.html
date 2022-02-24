@@ -1,0 +1,134 @@
+{% extends 'layout.html' %}
+
+{% block title %} Agregar alumno {% endblock title %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/students/add.css') }}">
+{% endblock head %}
+
+{% block main %}
+<section class="container pt-4">
+    <form action="{{ url_for('students.addStudent') }}" method="POST" class="form jumbotron p-4">
+        <h2>Agregar alumno</h2>
+        <p class="m-0 soft-text">Los siguientes datos pueden ser modificados más tarde</p>
+        <div class="input-group" id="input-group-name">
+            <div class="input-group-prepend">
+                <span class="input-group-text">
+                    <label for="name">Nombre completo</label>
+                </span>
+            </div>
+            <input type="name" id="name" name="name" class="form-control" placeholder="Nombre" autocomplete="off" autofocus>
+            <input type="text" id="surname" name="surname" class="form-control" placeholder="Apellido" autocomplete="off">
+        </div>
+        
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <span class="input-group-text">
+                    <label for="school">Escuela</label>
+                </span>
+            </div>
+            <input type="text" id="school" name="school" class="form-control" autocomplete="off">
+        </div>
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <span class="input-group-text">
+                    <label for="year">Año</label>
+                </span>
+            </div>
+            <input type="text" id="year" name="year" class="form-control" autocomplete="off">
+        </div>
+        <div class="input-group col-xs-12 col-sm-8 col-md-6 col-lg-5 col-xl-4 p-0">
+            <div class="input-group-prepend">
+                <span class="input-group-text">
+                    Fecha de ingreso
+                </span>
+            </div>
+            <input type="date" id="entryDate" name="entryDate" class="form-control">
+        </div>
+        <div id="input-group-location" class="input-group">
+            <div class="input-group col-xs-12 col-sm-5 col-md-3 p-0">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">
+                        <label for="country">País</label>
+                    </span>
+                </div>
+                <input type="text" id="country" name="country" class="form-control">
+            </div>
+            <div class="input-group col-xs-12 col-sm-5 col-md-3 p-0">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">
+                        <label for="region">Provincia</label>
+                    </span>
+                </div>
+                <input type="text" id="region" name="region" class="form-control">
+            </div>
+            <div class="input-group col-xs-12 col-sm-5 col-md-3 p-0">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">
+                        <label for="city">Ciudad</label>
+                    </span>
+                </div>
+                <input type="text" id="city" name="city" class="form-control">
+            </div>
+        </div>
+        <div id="input-group-phone" class="input-group">
+            <!-- <div class="input-group-prepend col-12 col-lg-1 p-0"> -->
+            <div class="input-group-prepend">
+                <span class="input-group-text">
+                    <label for="phone">Phone</label>
+                </span>
+            </div>
+            <div class="input-group col-12 col-lg-11 p-0" id="input-group-phone-values">
+                <div class="input-group-prepend">
+                    <span class="input-group-text phone-country-code-label bg-color-grey-1">
+                        <label for="phoneCountryCode">+</label>
+                    </span>
+                </div>
+                <input type="number" id="phoneCountryCode" name="phoneCountryCode" class="form-control" placeholder="Código de país" title="Código de país" autocomplete="off">
+                <input type="number" id="phoneAreaCode" name="phoneAreaCode" class="form-control" placeholder="Código de área" title="Código de área" autocomplete="off">
+                <input type="number" id="phoneLocalCode" name="phoneLocalCode" class="form-control" placeholder="Número local" title="Número local" autocomplete="off">
+            </div>
+        </div>
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <span class="input-group-text">
+                    <label for="origin">Viene de ...</label>
+                </span>
+            </div>
+            <input type="text" id="origin" name="origin" class="form-control" placeholder="Origen" title="De dónde viene el alumno" autocomplete="off">
+        </div>
+        <div id="input-group-recommendedBy" class="input-group">
+            <div class="input-group-prepend">
+                <span class="input-group-text">
+                    <label for="recommendedBy">Recomendado por</label>
+                </span>
+            </div>
+            <input type="text" id="recommendedBy" name="recommendedBy" class="form-control" placeholder="Nombre del conocido" title="Por quién el alumno obtuvo la recomendación" autocomplete="off">
+        </div>
+        <div id="group-add-student-contacts">
+            <button id="addStudentContactBtn" type="button" class="btn-wrapper">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text action">
+                            Agregar contacto
+                        </span>
+                    </div>
+                    <div class="input-group-append input-group-append-icon">
+                        <div class="input-group-text input-group-text-transparent">
+                            <img class="input-group-icon" src="https://res.cloudinary.com/djaci7iml/image/upload/v1645651873/icons/add-regular-074607.png" alt="">
+                        </div>
+                    </div>
+                </div>
+            </button>
+            <div id="add-student-contacts-values"></div>
+        </div>
+        <div class="form-group m-0">
+            <button class="btn action">Aceptar</button>
+        </div>
+    </form>
+</section>
+{% endblock main %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/students/add.js') }}"></script>
+{% endblock scripts %}
