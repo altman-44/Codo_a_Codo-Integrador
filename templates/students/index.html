@@ -1,0 +1,89 @@
+{% extends 'layout.html' %}
+
+{% block title %} Lista de alumnos {% endblock title %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/students/list.css') }}">
+{% endblock head %}
+
+{% block main %}
+<section class="p-4">
+    <h2>Alumnos</h2>
+    {% if students %}
+    <div class="quick-actions-container">
+        <p class="quick-actions-title">Acciones rápidas</p>
+        <div class="quick-actions-links">
+            <a href="{{ url_for('students.addStudentView') }}">Agregar nuevo estudiante</a>
+        </div>
+    </div>
+    <table class="table table-responsive-md">
+        <thead class="thead-dark">
+            <tr>
+                <th>Nombre</th>
+                <th>Escuela</th>
+                <th>Año</th>
+                <th>Observaciones</th>
+                <th>Fecha de ingreso</th>
+                <th>Celular</th>
+                <th>Contactos</th>
+                <th>Última actualización del año</th>
+                <th>Viene de...</th>
+                <th class="text-center">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for student in students %}
+            <tr>
+                <td class="align-middle">{{ student.name + ' ' + student.surname }}</td>
+                <td class="align-middle">{{ student.school }}</td>
+                <td class="align-middle">{{ student.year }}</td>
+                <td>{{ student.observations }}</td>
+                <td class="align-middle">
+                    <div class="d-flex flex-column align-items-center">
+                        <a href="{{ url_for('students.editStudentView', id=employee.id) }}" class="btn btn-edit btn-warning my-2">
+                            <i class="fas fa-pencil-alt"></i>
+                        </a>
+                        <form action="{{ url_for('students.deleteStudent', id=employee.id) }}" class="my-2 delete-employee-form">
+                            <button class="btn btn-remove btn-danger">
+                                <i class="far fa-trash-alt"></i>
+                            </button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+            <tr>
+                <form action="{{ url_for('students.addStudent') }}" method="POST">
+                    <td class="form-field-container">
+                        <input type="name" name="name" class="form-control" placeholder="Name">
+                        <input type="name" name="surname" class="form-control" placeholder="Surname">
+                    </td>
+                    <td class="form-field-container">
+                        <input type="email" name="email" class="form-control" placeholder="Email">
+                        <input type="password" name="password" class="form-control" placeholder="Password">
+                    </td>
+                    <td class="form-field-container">
+                        <input type="text" name="area" class="form-control" placeholder="Area">
+                    </td>
+                    <td></td>
+                    <td class="form-field-container">
+                        <button class="btn btn-add btn-outline-success">
+                            +
+                        </button>
+                    </td>
+                </form>
+            </tr>
+        </tbody>
+    </table>
+    {% else %}
+    <div class="py-3">
+        <p>Parece que todavía no tienes alumnos.</p>
+        <a href="{{ url_for('students.addStudentView') }}">Agregar alumno</a>
+    </div>
+    {% endif %}
+</section>
+{% endblock main %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/students/list.js') }}"></script>
+{% endblock scripts %}

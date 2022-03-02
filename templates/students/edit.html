@@ -1,0 +1,34 @@
+{% extends 'layout.html' %}
+
+{% block title %} Editar datos del alumno {% endblock title %}
+
+{% block main %}
+<section class="container pt-4">
+    <h2>Editar datos del alumno</h2>
+    <form action="{{ url_for('students.editStudent', id=student.id) }}" class="form jumbotron p-4 edit-data-form">
+        <div class="form-group">
+            <label for="name">Nombre</label>
+            <input type="name" id="name" name="name" value="{{ student.name }}" class="form-control" autocomplete="off">
+        </div>
+        <div class="form-group">
+            <label for="surname">Apellido</label>
+            <input type="surname" id="surname" name="surname" value="{{ student.surname }}" class="form-control" autocomplete="off">
+        </div>
+        <div class="form-group">
+            <label for="school">Escuela</label>
+            <input type="text" id="school" name="school" value="{{ student.school }}" class="form-control" autocomplete="off">
+        </div>
+        <div class="form-group">
+            <label for="entryDate">Fecha de Ingreso</label>
+            <input type="text" id="entryDate" name="entryDate" value="{{ student.entryDate }}" class="form-control" autocomplete="off">
+        </div>
+        <div class="form-group">
+            <button class="btn btn-primary">Aceptar</button>
+        </div>
+    </form>
+</section>
+{% endblock main %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/students/edit.js') }}"></script>
+{% endblock scripts %}

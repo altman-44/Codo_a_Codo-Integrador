@@ -1,10 +1,14 @@
 import os
+from dotenv import load_dotenv
+
 from flaskext.mysql import MySQL
 from pymysql.cursors import DictCursor
 from db.HerokuPostgresql import HerokuPostgresql
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
+
+load_dotenv()
 
 # database = ''
 SQLALCHEMY_DATABASE_URI = ''
