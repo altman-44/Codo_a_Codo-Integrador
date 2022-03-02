@@ -24,7 +24,7 @@ header {
     border: 2px solid black;
 }
 
-.btn-add, .btn-remove {
+.btn-add, .btn-remove, .btn-edit {
     border-radius: 50%;
     font-size: 1.5rem;
     padding-top: 0;

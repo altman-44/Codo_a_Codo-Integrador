@@ -10,7 +10,7 @@ home = Blueprint('home', __name__)
 
 @home.route('/')
 def index():
-    return render_layout_template('home.html', var="holaa")
+    return render_layout_template('home.html')
 
 
 @home.route('/login', methods=["GET", "POST"])

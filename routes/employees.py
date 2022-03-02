@@ -8,6 +8,7 @@ from pymysql import IntegrityError
 from db.queries import createUser
 from models.Employee import Employee
 from models.User import User
+from helpers.resource_uploader import uploadProfileImage as helper_uploadProfileImage
 
 employees = Blueprint('employees', __name__)
 
@@ -93,15 +94,10 @@ def editEmployee(id):
     employee = dbSession.query(Employee).filter_by(id=id).first()
     if employee:
         try:
-            newName = request.form['name']
-            newSurname = request.form['surname']
-            newEmail = request.form['email']
-            newArea = request.form['area']
-
-            dbSession.query(User).filter_by(id=employee.user_id).update({'email': newEmail})
-            employee.name = newName
-            employee.surname = newSurname
-            employee.newArea = newArea
+            dbSession.query(User).filter_by(id=employee.user_id).update({'email': request.form['email']})
+            employee.name = request.form['name']
+            employee.surname = request.form['surname']
+            employee.area = request.form['area']
             
             dbSession.commit()
             type = 'success'
@@ -116,11 +112,7 @@ def uploadProfileImage():
     employee = dbSession.query(Employee).filter_by(id=request.form['id']).first()
     if employee:
         if request.files['profileImage']:
-            result = cloudinaryUploader.upload(
-                request.files['profileImage'],
-                folder=(os.getenv('CLOUDINARY_FOLDER')) + '/',
-                public_id=employee.id
-            )
+            result = helper_uploadProfileImage(request.files['profileImage'], employee.user_id)
             employee.profile_img = result['secure_url']
             dbSession.commit()
         else:
@@ -135,7 +127,6 @@ def deleteEmployee(id):
     type = 'error'
     message = "Couldn't delete the employee"
     employee = dbSession.query(Employee).filter_by(id=id).first()
-    print('ID: ', id)
     if employee:
         try:
             dbSession.delete(employee)

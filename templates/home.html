@@ -7,17 +7,11 @@ main %}
     This is a simple software, its function is to provide a wide variety of possibilities to the members of any company around the world. Esentially, the managers of an organization will be able to register employees. In the incoming version, employees will be able to manage their own data.
   </p>
   <hr class="my-4" />
-  <p>
-    Want to try this out? You must first register to create a user and thus be able to
-    perform the actions of an organization manager by yourself.
+  <p>Want to try this out?
+    <a href="{{ url_for('home.register') }}">
+      Create an account
+    </a>
   </p>
-  <br />
-  <a
-    class="btn btn-primary btn-lg"
-    href="{{ url_for('home.register') }}"
-    role="button"
-    >Register</a
-  >
 </div>
 
 <div class="row">
