@@ -1,5 +1,6 @@
 import os
 import cloudinary.uploader as cloudinaryUploader
+from django.db import DataError
 from middlewares.auth import user_auth, user_type_auth, getPayload
 from flask import Blueprint, request, redirect, url_for, flash, jsonify, session
 from extensions import dbSession
@@ -29,29 +30,42 @@ def getStudents():
     return redirect(url_for('dashboard.index'))
 
 @students.route('/create', methods=['GET'])
-def addStudentView(email='', name='', surname='', area=''):
-    return render_layout_template('students/add.html', email=email, name=name, surname=surname, area=area)
+def addStudentView(**args):
+    print('ADD STUDENT VIEW')
+    print(dict(**args))
+    return render_layout_template('students/add.html', **args)
 
 @students.route('/create', methods=['POST'])
 @user_type_auth
 def addStudent():
     """A function to create an employee. Executed by the action of an organization admin, not an employee."""
-    if validStudentData(request.form):
-        GENERIC_DB_ERR_MSG = 'Hubo un error al intentar subir los datos'
-        
-        payload = getPayload()
-        try:
-            student = Student(request.form['name'], request.form['surname'],
-                payload['user_data']['organization_id'], createdUser.id, request.form['area'])
-            dbSession.add(student)
-            dbSession.commit()
-            session.pop('_flashes', None)
-            flash('User created successfully!', 'success')
-        except Exception:
-            flash(GENERIC_DB_ERR_MSG, 'error')
-            return redirect(url_for('students.addStudentView', name=request.form['name'], surname=request.form['surname']))               
-        return redirect(url_for('students.getStudents'))
-    flash('All fields are required', 'error')
+    # if validStudentData(request.form):
+    GENERIC_DB_ERR_MSG = 'Hubo un error al intentar subir los datos'
+    print(*request.form)
+    
+    payload = getPayload()
+    try:
+        # data = {
+        #     'name': request.form['name'],
+        #     'surname': request.form['surname'],
+        #     'entryDate': request.form['entryDate'],
+        #     request.form['year'],
+        #     request.form['school'],
+        #     request.form['phone'],
+        #     request.form['recommendedBy'] if 'recommendedBy' in request.form else None
+        # }
+        # student = Student(
+        #     payload['user_data']['organization_id'],
+        #     *data
+        # )
+        # dbSession.add(student)
+        # dbSession.commit()
+        # session.pop('_flashes', None)
+        flash('User created successfully!', 'success')
+    except Exception:
+        flash(GENERIC_DB_ERR_MSG, 'error')
+        return redirect(url_for('students.addStudentView', **request.form))               
+    return redirect(url_for('students.getStudents'))
     return redirect(url_for('students.addStudentView', name=request.form['name'], surname=request.form['surname']))
 
 @students.route('/edit/<int:id>', methods=["GET"])

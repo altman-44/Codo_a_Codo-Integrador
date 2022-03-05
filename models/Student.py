@@ -41,3 +41,8 @@ class Student(Base):
         self.phone = phone
         self.recommendedBy = recommendedBy
         # Falta origin, location y contacts
+
+    def validateFields(self):
+        if self.organizationId and self.name and self.surname and self.entryDate and self.year:
+            return True
+        return False

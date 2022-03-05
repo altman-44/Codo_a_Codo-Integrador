@@ -17,7 +17,7 @@
                     <label for="name">Nombre completo</label>
                 </span>
             </div>
-            <input type="name" id="name" name="name" class="form-control" placeholder="Nombre" autocomplete="off" autofocus>
+            <input type="name" id="name" name="name" value="{{name}}" class="form-control" placeholder="Nombre" autocomplete="off" autofocus>
             <input type="text" id="surname" name="surname" class="form-control" placeholder="Apellido" autocomplete="off">
         </div>
         
@@ -37,7 +37,7 @@
             </div>
             <input type="text" id="year" name="year" class="form-control" autocomplete="off">
         </div>
-        <div class="input-group col-xs-12 col-sm-8 col-md-6 col-lg-5 col-xl-4 p-0">
+        <div class="input-group col-12 col-sm-8 col-md-6 col-lg-5 col-xl-4 p-0">
             <div class="input-group-prepend">
                 <span class="input-group-text">
                     Fecha de ingreso
@@ -46,7 +46,7 @@
             <input type="date" id="entryDate" name="entryDate" class="form-control">
         </div>
         <div id="input-group-location" class="input-group">
-            <div class="input-group col-xs-12 col-sm-5 col-md-3 p-0">
+            <div class="input-group col-12 col-sm-5 col-md-3 p-0">
                 <div class="input-group-prepend">
                     <span class="input-group-text">
                         <label for="country">País</label>
@@ -54,7 +54,7 @@
                 </div>
                 <input type="text" id="country" name="country" class="form-control">
             </div>
-            <div class="input-group col-xs-12 col-sm-5 col-md-3 p-0">
+            <div class="input-group col-12 col-sm-5 col-md-3 p-0">
                 <div class="input-group-prepend">
                     <span class="input-group-text">
                         <label for="region">Provincia</label>
@@ -62,7 +62,7 @@
                 </div>
                 <input type="text" id="region" name="region" class="form-control">
             </div>
-            <div class="input-group col-xs-12 col-sm-5 col-md-3 p-0">
+            <div class="input-group col-12 col-sm-5 col-md-3 p-0">
                 <div class="input-group-prepend">
                     <span class="input-group-text">
                         <label for="city">Ciudad</label>
@@ -72,7 +72,6 @@
             </div>
         </div>
         <div id="input-group-phone" class="input-group">
-            <!-- <div class="input-group-prepend col-12 col-lg-1 p-0"> -->
             <div class="input-group-prepend">
                 <span class="input-group-text">
                     <label for="phone">Phone</label>
@@ -107,14 +106,14 @@
         </div>
         <div id="group-add-student-contacts">
             <button id="addStudentContactBtn" type="button" class="btn-wrapper">
-                <div class="input-group">
+                <div class="input-group action-wrapper-hover-transform img-wrapper-hover-transform">
                     <div class="input-group-prepend">
                         <span class="input-group-text action">
                             Agregar contacto
                         </span>
                     </div>
                     <div class="input-group-append input-group-append-icon">
-                        <div class="input-group-text input-group-text-transparent">
+                        <div class="input-group-text input-group-text-transparent action action-transparent">
                             <img class="input-group-icon" src="https://res.cloudinary.com/djaci7iml/image/upload/v1645651873/icons/add-regular-074607.png" alt="">
                         </div>
                     </div>
