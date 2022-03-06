@@ -47,7 +47,7 @@ input.form-control:focus {
 }
 
 form > .input-group, form > .form-group, form > #group-add-student-contacts {
-    margin: 2rem 0;
+    margin: 2.5rem 0;
 }
 
 /* Colors */
@@ -55,29 +55,40 @@ form > .input-group, form > .form-group, form > #group-add-student-contacts {
     background-color: var(--color-grey-1) !important;
 }
 
+/* General */
 .action {
     background-color: var(--color-action);
     color: var(--color-action-text);
     border-color: var(--color-action);
     transition: .5s ease;
 }
-.action:hover {
+.action-transparent {
+    background-color: transparent;
+    color: var(--primary-color-dark);
+}
+.action:hover, .hover-bg-action:hover, .action-wrapper-hover-transform:hover .action {
     background-color: var(--color-action-text);
-    color: var(--color-action);
+    color: var(--primary-color-dark);
+}
+/* .action-wrapper-hover-transform:hover .action {
+    background-color: var(--color-action-text);
+    color: var(--primary-color-dark);
+} */
+
+.img-wrapper-hover-transform img {
+    transition: .5s ease;
+}
+.img-wrapper-hover-transform:hover img {
+    transform: rotate(360deg) scale(1.15);
 }
 
+/* Input Group */
 .input-group-text:not(.input-group-text-transparent):not(.action) {
     /* width: 100%; */
     background-color: var(--primary-color-dark);
     color: var(--primary-color-dark-text);
     border-color: var(--primary-color-dark);
 }
-
-/* .input-group-text-action {
-    background-color: var(--color-action);
-    color: var(--color-action-text);
-    border-color: var(--color-action);
-} */
 
 .input-group-prepend .input-group-text label {
     margin: 0;
