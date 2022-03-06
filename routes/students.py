@@ -29,8 +29,8 @@ def getStudents():
     return redirect(url_for('dashboard.index'))
 
 @students.route('/create', methods=['GET'])
-def addStudentView(email='', name='', surname='', area=''):
-    return render_layout_template('students/add.html', email=email, name=name, surname=surname, area=area)
+def addStudentView(email='', name='', surname=''):
+    return render_layout_template('students/add.html', email=email, name=name, surname=surname)
 
 @students.route('/create', methods=['POST'])
 @user_type_auth

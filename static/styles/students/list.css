@@ -23,3 +23,8 @@
 .quick-actions-title {
     border-bottom: 1px solid rgb(109, 109, 109);
 }
+
+table tr.student-row th, table tr.student-row td {
+    text-align: center;
+    vertical-align: middle;
+}

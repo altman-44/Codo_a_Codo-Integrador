@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     loadDeleteFormsAction()
 
     function loadDeleteFormsAction() {
-        const forms = document.getElementsByClassName('delete-employee-form')
+        const forms = document.getElementsByClassName('delete-student-form')
         for (form of forms) {
             form.addEventListener('submit', (e) => {
                 e.preventDefault()

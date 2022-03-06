@@ -13,12 +13,13 @@
     <div class="quick-actions-container">
         <p class="quick-actions-title">Acciones rápidas</p>
         <div class="quick-actions-links">
-            <a href="{{ url_for('students.addStudentView') }}">Agregar nuevo estudiante</a>
+            <a href="{{ url_for('students.addStudentView') }}">Agregar nuevo alumno</a>
         </div>
     </div>
     <table class="table table-responsive-md">
         <thead class="thead-dark">
-            <tr>
+            <tr class="student-row">
+                <th>Actions</th>
                 <th>Nombre</th>
                 <th>Escuela</th>
                 <th>Año</th>
@@ -26,29 +27,63 @@
                 <th>Fecha de ingreso</th>
                 <th>Celular</th>
                 <th>Contactos</th>
+                <th>Origen</th>
                 <th>Última actualización del año</th>
-                <th>Viene de...</th>
-                <th class="text-center">Actions</th>
             </tr>
         </thead>
         <tbody>
             {% for student in students %}
-            <tr>
-                <td class="align-middle">{{ student.name + ' ' + student.surname }}</td>
-                <td class="align-middle">{{ student.school }}</td>
-                <td class="align-middle">{{ student.year }}</td>
-                <td>{{ student.observations }}</td>
-                <td class="align-middle">
+            <tr class="student-row">
+                <td>
                     <div class="d-flex flex-column align-items-center">
-                        <a href="{{ url_for('students.editStudentView', id=employee.id) }}" class="btn btn-edit btn-warning my-2">
+                        <a href="{{ url_for('students.editStudentView', id=student.id) }}" class="btn btn-edit btn-warning my-2">
                             <i class="fas fa-pencil-alt"></i>
                         </a>
-                        <form action="{{ url_for('students.deleteStudent', id=employee.id) }}" class="my-2 delete-employee-form">
+                        <form action="{{ url_for('students.deleteStudent', id=student.id) }}" class="my-2 delete-student-form">
                             <button class="btn btn-remove btn-danger">
                                 <i class="far fa-trash-alt"></i>
                             </button>
                         </form>
                     </div>
+                </td>
+                <td>{{ student.name + ' ' + student.surname }}</td>
+                <td>{{ student.school }}</td>
+                <td>{{ student.year }}</td>
+                <td>
+                    {% if student.observations %}
+                        {{ student.observations }}
+                    {% else %}
+                    -
+                    {% endif%}
+                </td>
+                <td>
+                    {{ student.entryDate }}
+                </td>
+                <td>
+                    {{ student.phone }}
+                </td>
+                <td>
+                    {% if student.contacts %}
+                        {% for contact in student.contacts %}
+                            {% if loop.index > 1 %}
+                            <hr>
+                            {% endif %}
+                            <span>Nombre: {{ contact.name }}</span>
+                            <span>Relación: {{ contact.relationship }}</span>
+                            <span>Celular: {{ contact.phone }}</span>
+                        {% endfor %}
+                    {% else %}
+                    -
+                    {% endif %}
+                </td>
+                <td>
+                    {{ student.origin.name }}
+                    {% if student.recommendedBy %}
+                        ({{ student.recommendedBy }})
+                    {% endif %}
+                </td>
+                <td>
+                    {{ student.yearUpdatedAt }}
                 </td>
             </tr>
             {% endfor %}
