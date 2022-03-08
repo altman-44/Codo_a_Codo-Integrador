@@ -9,18 +9,23 @@ def encodeData(payload):
 def decodeToken(token):
     return jwt.decode(token, os.getenv('SECRET_KEY'), algorithms=['HS256'])
 
-def generateUserTypeData(userType, details):
+# def generateUserTypeData(userType, details):
+#     return {
+#         'type': userType,
+#         'details': {col.name: getattr(details, col.name) for col in details.__table__.columns}
+#     }
+
+def generateUserData(entityInstance):
     return {
-        'type': userType,
-        'details': {col.name: getattr(details, col.name) for col in details.__table__.columns}
+        'details': {col.name: getattr(entityInstance, col.name) for col in entityInstance.__table__.columns}
     }
 
-def generateUserDataPayload(userId, organizationId=None, userType=None, userTypeId=None):
+def generateUserDataPayload(userId, organizationId=None):
     return {
         'organization_id': organizationId,
-        'user_id': userId,
-        'user_type': {
-            'type': userType.__name__ if userType else None,
-            'id': userTypeId
-        }
+        'user_id': userId
+        # 'user_type': {
+        #     'type': userType.__name__ if userType else None,
+        #     'id': userTypeId
+        # }
     }

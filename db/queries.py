@@ -1,11 +1,10 @@
 import jwt
 import os
 from extensions import dbSession
-from helpers_session import generateUserTypeData, generateUserDataPayload
-from flask import flash, session
+from helpers_session import generateUserDataPayload, generateUserData
+from flask import flash
 from models.User import User
 from models.Organization import Organization
-# from models.Employee import Employee
 
 
 def createUser(email, password):
@@ -33,30 +32,9 @@ def searchDataByUserId(userId):
     organization = dbSession.query(
         Organization).filter_by(user_id=userId).first()
     if organization:
-        data = generateDataForOrganization(organization)
-        # payload['organization_id'] = organization.id
         payload['user_data'] = generateUserDataPayload(
             userId=userId,
-            organizationId=organization.id,
-            userType=Organization,
-            userTypeId=organization.id)
-    else:
-        pass
-        # employee = dbSession.query(Employee).filter_by(user_id=userId).first()
-        # if employee:
-        #     data = generateUserTypeData(userType='employee', details=employee)
-        #     # payload['organization_id'] = employee.organization_id
-        #     payload['user_data'] = generateUserDataPayload(
-        #         userId=userId,
-        #         organizationId=employee.organization_id,
-        #         userType=Employee,
-        #         userTypeId=employee.id)
-    # if payload:
-    #     payload['user_id'] = userId
+            organizationId=organization.id
+        )
+        data = generateUserData(organization)
     return (payload, data)
-
-
-def generateDataForOrganization(organizationData):
-    data = generateUserTypeData(
-        userType='organization', details=organizationData)
-    return data

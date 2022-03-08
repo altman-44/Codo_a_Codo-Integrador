@@ -29,7 +29,8 @@ def login():
                         'user_data': generateUserDataPayload(user.id)
                     }
                     session['token'] = encodeData(payload=payload)
-                    return redirect(url_for('home.selectUserType'))
+                    return redirect(url_for('organizations.index'))
+
                 session['token'] = encodeData(payload=payload)
                 session['data'] = data
 
@@ -60,9 +61,9 @@ def logout():
     return redirect(url_for('home.index'))
 
 
-@home.route('/select-user-type')
-def selectUserType():
-    return render_layout_template('select-user-type.html')
+# @home.route('/select-user-type')
+# def selectUserType():
+#     return render_layout_template('select-user-type.html')
 
 
 def validLoginData(data):

@@ -1,10 +1,8 @@
-# import os
-# import jwt
 from models.Organization import Organization
 from extensions import dbSession
 from flask import Blueprint, render_template, request, redirect, session, url_for, flash
 from middlewares.auth import user_auth, getPayload
-from helpers_session import generateUserTypeData, encodeData, generateUserDataPayload
+from helpers_session import encodeData, generateUserData, generateUserDataPayload
 
 organizations = Blueprint('organizations', __name__)
 
@@ -26,12 +24,11 @@ def createOrganization():
             organization = Organization(request.form['name'], userId)
             dbSession.add(organization)
             dbSession.commit()
-            data = generateUserTypeData(userType='organization', details=organization)
             payload['user_data'] = generateUserDataPayload(
                 userId=userId,
-                organizationId=organization.id,
-                userType=Organization,
-                userTypeId=organization.id)
+                organizationId=organization.id
+            )
+            data = generateUserData(entityInstance=organization)
             session['token'] = encodeData(payload=payload)
             session['data'] = data
             return redirect(url_for('dashboard.index'))
