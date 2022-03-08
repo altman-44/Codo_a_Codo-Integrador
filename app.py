@@ -29,4 +29,4 @@ cloudinary.config(
 # app.config['UPLOADS_PATH'] = os.path.join('uploads')
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=True if os.getenv('ENV_MODE') != 'production' else False)
+    app.run(host='0.0.0.0', debug=True if os.getenv('FLASK_ENV') != 'production' else False)

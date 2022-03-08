@@ -1,6 +1,6 @@
 import os
 from functools import wraps
-from flask import session, redirect, url_for, flash
+from flask import session, redirect, url_for, flash, request
 from helpers_session import decodeToken
 
 def user_auth(f):
@@ -10,7 +10,13 @@ def user_auth(f):
         if payload:
             if verifyBaseAuthSecret(payload):
                 return f(*args, **kwargs)
-        return redirect(url_for('home.login'))
+
+        # if request.referrer and request.path[::-1][1:request.path[::-1].find('/')].find('.') == -1:
+        # if request.path[::-1][0:request.path[::-1].find('/')].find('.') == -1:
+        #     print('-----------------------', flush=True)
+        #     # print('REFERRER: ', request.referrer, flush=True)
+        #     print('PATH: ', request.path, flush=True)
+        return redirect(url_for('home.login', redirectToUrl=request.path))
     return decorated_function
 
 def user_type_auth(f):

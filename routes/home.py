@@ -1,6 +1,6 @@
 from extensions import dbSession
 from flask import Blueprint, request, redirect, url_for, flash, session
-from routes.general_functions import render_layout_template
+from routes.general_functions import render_layout_template, getParamsFromUrl
 from db.queries import searchDataByUserId, createUser
 from helpers_session import encodeData, decodeToken, generateUserDataPayload
 from models.User import User
@@ -16,7 +16,7 @@ def index():
 @home.route('/login', methods=["GET", "POST"])
 def login():
     if request.method == 'GET':
-        return render_layout_template('login.html', email="t1@t1.com", password="t1")
+        return render_layout_template('login.html', email="tp1@tp1.com", password="tp1")
     if validLoginData(request.form):
         user = dbSession.query(User).filter_by(
             email=request.form['email']).first()
@@ -32,7 +32,13 @@ def login():
                     return redirect(url_for('home.selectUserType'))
                 session['token'] = encodeData(payload=payload)
                 session['data'] = data
-                return redirect(url_for('dashboard.index'))
+
+                session['urlParams'] = getParamsFromUrl(request.referrer)
+                if 'redirectToUrl' not in session['urlParams']:
+                    return redirect(url_for('dashboard.index'))
+                session['urlParams']['redirectToUrl'] = session['urlParams']['redirectToUrl'].replace('%2F', '/')
+                return redirect(session['urlParams']['redirectToUrl'])
+                
         flash("Email and password don't match", 'error')
     return render_layout_template('login.html', email=request.form['email'], password=request.form['password'])
 
