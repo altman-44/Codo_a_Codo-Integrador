@@ -34,11 +34,11 @@ def login():
                 session['token'] = encodeData(payload=payload)
                 session['data'] = data
 
-                session['urlParams'] = getParamsFromUrl(request.referrer)
-                if 'redirectToUrl' not in session['urlParams']:
+                urlParams = getParamsFromUrl(request.referrer)
+                if 'redirectToUrl' not in urlParams:
                     return redirect(url_for('dashboard.index'))
-                session['urlParams']['redirectToUrl'] = session['urlParams']['redirectToUrl'].replace('%2F', '/')
-                return redirect(session['urlParams']['redirectToUrl'])
+                redirectToUrl = urlParams['redirectToUrl'].replace('%2F', '/')
+                return redirect(redirectToUrl)
                 
         flash("Email and password don't match", 'error')
     return render_layout_template('login.html', email=request.form['email'], password=request.form['password'])

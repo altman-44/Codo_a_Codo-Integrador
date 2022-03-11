@@ -37,28 +37,34 @@ def addStudentView(email='', name='', surname=''):
 def addStudent():
     """A function to create an employee. Executed by the action of an organization admin, not an employee."""
     GENERIC_DB_ERR_MSG = 'Hubo un error al intentar subir los datos'
-    print(*request.form)
     
     payload = getPayload()
     try:
-        # data = {
-        #     'name': request.form['name'],
-        #     'surname': request.form['surname'],
-        #     'entryDate': request.form['entryDate'],
-        #     request.form['year'],
-        #     request.form['school'],
-        #     request.form['phone'],
-        #     request.form['recommendedBy'] if 'recommendedBy' in request.form else None
-        # }
-        # student = Student(
-        #     payload['user_data']['organization_id'],
-        #     *data
-        # )
-        # dbSession.add(student)
-        # dbSession.commit()
-        # session.pop('_flashes', None)
+        print('contact names', 
+            request.form['contact-names'] if 'contact-names' in request.form else 'None',
+            flush=True)
+        print(*request.form, flush=True)
+        data = {
+            'name': request.form['name'],
+            'surname': request.form['surname'],
+            'entryDate': request.form['entryDate'],
+            'year': request.form['year'],
+            'location': Location(request.form['country'], request.form['region'], request.form['city']),
+            'origin': StudentOrigin(request.form['origin']),
+            'school': request.form['school'],
+            'phoneCodes': (request.form['phoneCountryCode'], request.form['phoneAreaCode'], request.form['phoneLocalCode']),
+            'recommendedBy': request.form['recommendedBy'] if 'recommendedBy' in request.form else None
+        }
+        student = Student(
+            payload['user_data']['organization_id'],
+            **data
+        )
+        dbSession.add(student)
+        dbSession.commit()
+        session.pop('_flashes', None)
         flash('User created successfully!', 'success')
-    except Exception:
+    except Exception as err:
+        print(err, flush=True)
         flash(GENERIC_DB_ERR_MSG, 'error')
         return redirect(url_for('students.addStudentView', **request.form))               
     return redirect(url_for('students.getStudents'))

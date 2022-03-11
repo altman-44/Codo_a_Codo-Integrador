@@ -41,11 +41,14 @@ function loadAddStudentContactCheck() {
         newAddStudentContactContainer.classList.add('add-student-contact-container')
         newInputGroupsContainer.classList.add('add-student-contact-input-group-container', 'col-10')
 
-        const firstInputId = 'contact-name-' + contactNumber
+        const FIRST_INPUT_ID = 'contact-name-' + contactNumber
+        const NAME_OF_INPUT_CONTACT_NAME = 'contact-names'
+        const NAME_OF_INPUT_CONTACT_RELATIONSHIP = 'contact-relationships'
+        const NAME_OF_INPUT_CONTACT_PHONE = 'contact-phones'
         const newInputGroups = [
-            createInputGroup('Nombre del contacto', firstInputId, 'text'),
-            createInputGroup('Relación con el alumno', 'contact-relationship-' + contactNumber, 'text'),
-            createInputGroup('Celular', 'contact-phone-' + contactNumber, 'number')
+            createInputGroup('Nombre del contacto', FIRST_INPUT_ID, NAME_OF_INPUT_CONTACT_NAME, 'text'),
+            createInputGroup('Relación con el alumno', 'contact-relationship-' + contactNumber, NAME_OF_INPUT_CONTACT_RELATIONSHIP, 'text'),
+            createInputGroup('Celular', 'contact-phone-' + contactNumber, NAME_OF_INPUT_CONTACT_PHONE, 'number')
         ]
         newInputGroups.forEach(inputGroup => newInputGroupsContainer.appendChild(inputGroup))
 
@@ -64,10 +67,10 @@ function loadAddStudentContactCheck() {
         newAddStudentContactContainer.appendChild(newInputGroupsContainer)
         newAddStudentContactContainer.appendChild(newActionsContainer)
         valuesContainer.prepend(newAddStudentContactContainer)
-        newInputGroups[0].querySelector('#' + firstInputId).focus()
+        newInputGroups[0].querySelector('#' + FIRST_INPUT_ID).focus()
     })
 
-    function createInputGroup(labelText, inputId, inputType='text') {
+    function createInputGroup(labelText, inputId, inputName, inputType='text') {
         const newInputGroup = document.createElement('div')
         const newInputGroupPrepend = document.createElement('div')
         const newInputGroupText = document.createElement('span')
@@ -80,6 +83,7 @@ function loadAddStudentContactCheck() {
         newLabel.innerText = labelText
         newLabel.htmlFor = inputId
         newInput.id = inputId
+        newInput.name = inputName
         newInput.type = inputType
         newInput.classList.add('form-control')
         

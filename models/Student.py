@@ -31,14 +31,16 @@ class Student(Base):
     'Location.city == foreign(Student.locationCity))')
     contacts = relationship('StudentContact', back_populates='student')
 
-    def __init__(self, organization_id, name, surname, entryDate, year, school=None, phone=None, recommendedBy=None):
+    def __init__(self, organization_id, name, surname, entryDate, year, location, origin, school=None, phoneCodes=None, recommendedBy=None):
         self.organizationId = organization_id
         self.name = name
         self.surname = surname
         self.entryDate = entryDate
         self.year = year
+        self.location = location
+        self.origin = origin
         self.school = school
-        self.phone = phone
+        self.phone = ''.join(phoneCodes)
         self.recommendedBy = recommendedBy
         # Falta origin, location y contacts
 
